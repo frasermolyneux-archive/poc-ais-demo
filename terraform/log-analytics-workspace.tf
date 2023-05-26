@@ -1,6 +1,4 @@
 resource "azurerm_resource_group" "log" {
-  for_each = toset(var.locations)
-
   name     = format("rg-log-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
   location = each.value
 
@@ -11,7 +9,7 @@ resource "azurerm_log_analytics_workspace" "law" {
   name = format("la-%s-%s-%s", random_id.environment_id.hex, var.environment, var.primary_location)
 
   location            = var.primary_location
-  resource_group_name = azurerm_resource_group.log[var.primary_location].name
+  resource_group_name = azurerm_resource_group.log.name
 
   sku = "PerGB2018"
 
