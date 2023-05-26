@@ -27,7 +27,7 @@ resource "azurerm_resource_group" "dns" {
 }
 
 resource "azurerm_private_dns_zone" "dns" {
-  for_each = {for key, value in var.private_dns_zones : key => value }
+  for_each = {for key, value in local.private_dns_zones : key => value }
 
   name                = each.value
   resource_group_name = azurerm_resource_group.dns.name
