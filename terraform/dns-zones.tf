@@ -74,3 +74,12 @@ resource "azurerm_private_dns_zone_virtual_network_link" "file" {
   private_dns_zone_name = azurerm_private_dns_zone.file.name
   virtual_network_id    = azurerm_virtual_network.apps[each.value].id
 }
+
+resource "azurerm_private_dns_zone_virtual_network_link" "vault" {
+  for_each = toset(var.locations)
+
+  name                  = format("link-vault-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  resource_group_name   = azurerm_resource_group.rg[var.primary_location].name
+  private_dns_zone_name = azurerm_private_dns_zone.vault.name
+  virtual_network_id    = azurerm_virtual_network.apps[each.value].id
+}
