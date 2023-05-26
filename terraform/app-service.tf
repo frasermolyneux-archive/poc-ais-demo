@@ -1,12 +1,51 @@
+resource "azurerm_resource_group" "app" {
+  for_each = toset(var.locations)
+
+  name     = format("rg-app-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  location = each.value
+
+  tags = var.tags
+}
+
+resource "azurerm_service_plan" "app" {
+  for_each = toset(var.locations)
+
+  name = format("sp-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+
+  resource_group_name = azurerm_resource_group.app[each.value].name
+  location            = azurerm_resource_group.app[each.value].location
+
+  os_type  = "Linux"
+  sku_name = "P1v2"
+}
+
+resource "azurerm_monitor_diagnostic_setting" "app" {
+  for_each = toset(var.locations)
+
+  name = azurerm_log_analytics_workspace.law.name
+
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
+
+  target_resource_id = azurerm_service_plan.app[each.value].id
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+}
+
 resource "azurerm_linux_web_app" "app" {
   for_each = toset(var.locations)
 
   name = format("app-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
 
-  resource_group_name = azurerm_resource_group.rg[each.value].name
-  location            = azurerm_resource_group.rg[each.value].location
+  resource_group_name = azurerm_resource_group.app[each.value].name
+  location            = azurerm_resource_group.app[each.value].location
 
-  service_plan_id = azurerm_service_plan.sp[each.value].id
+  service_plan_id = azurerm_service_plan.app[each.value].id
 
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY"             = azurerm_application_insights.ai[each.value].instrumentation_key
