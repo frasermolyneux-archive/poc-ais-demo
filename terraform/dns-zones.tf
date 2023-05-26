@@ -10,8 +10,8 @@ locals {
 
   location_private_dns_zones = flatten([
     for location in var.locations : [
-      for private_dns_zone in local.private_dns_zones : {
-        key               = format("%s-%s", private_dns_zone.key, location)
+      for private_dns_zone_key, private_dns_zone in local.private_dns_zones : {
+        key               = format("%s-%s", private_dns_zone_key, location)
         location          = location
         private_dns_zone  = private_dns_zone
       }
