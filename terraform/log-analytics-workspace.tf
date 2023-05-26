@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "log" {
-  name     = format("rg-log-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
-  location = each.value
+  name     = format("rg-log-%s-%s-%s", random_id.environment_id.hex, var.environment, var.primary_location)
+  location = var.primary_location
 
   tags = var.tags
 }
