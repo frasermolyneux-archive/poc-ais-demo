@@ -40,6 +40,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns" {
 
   name                  = format("link-%s-%s", each.key, lower(random_string.location[each.value.location].result))
   resource_group_name   = azurerm_resource_group.vnet[each.value.location].name
-  private_dns_zone_name = azurerm_private_dns_zone.dns[each].name
+  private_dns_zone_name = azurerm_private_dns_zone.dns[each.value.key].name
   virtual_network_id    = azurerm_virtual_network.apps[each.value.location].id
 }
