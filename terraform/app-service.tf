@@ -19,7 +19,7 @@ resource "azurerm_service_plan" "app" {
   sku_name = "P1v2"
 }
 
-resource "azurerm_monitor_diagnostic_setting" "app" {
+resource "azurerm_monitor_diagnostic_setting" "app_svcplan" {
   for_each = toset(var.locations)
 
   name = azurerm_log_analytics_workspace.law.name
