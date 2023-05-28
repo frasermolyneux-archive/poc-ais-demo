@@ -16,7 +16,7 @@ resource "azurerm_servicebus_namespace" "sb" {
   location            = azurerm_resource_group.sb[each.value].location
   tags                = var.tags
 
-  sku = "Basic"
+  sku = "Premium"
 
   public_network_access_enabled = false
   minimum_tls_version           = "1.2"
