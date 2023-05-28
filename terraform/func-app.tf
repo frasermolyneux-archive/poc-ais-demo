@@ -175,6 +175,11 @@ resource "azurerm_linux_function_app" "func" {
   https_only = true
 
   site_config {
+    always_on = true
+
+    application_insights_key               = azurerm_application_insights.ai[each.value].instrumentation_key
+    application_insights_connection_string = azurerm_application_insights.ai[each.value].connection_string
+
     vnet_route_all_enabled = true
 
     ftps_state = "Disabled"
@@ -188,9 +193,7 @@ resource "azurerm_linux_function_app" "func" {
   content_share_force_disabled = true
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.ai[each.value].instrumentation_key
-    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.ai[each.value].connection_string
-    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name)
+    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name)
   }
 
   identity {
