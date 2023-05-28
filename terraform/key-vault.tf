@@ -71,7 +71,7 @@ resource "azurerm_private_endpoint" "kv" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      azurerm_private_dns_zone.vault.id,
+      azurerm_private_dns_zone.dns["vault"].id
     ]
   }
 
