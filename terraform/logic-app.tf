@@ -173,15 +173,15 @@ resource "azurerm_logic_app_standard" "logic" {
 
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai[each.value].instrumentation_key
-    "FUNCTIONS_EXTENSION_VERSION"    = "~4"
     "FUNCTIONS_WORKER_RUNTIME"       = "node"
-    "WEBSITE_NODE_DEFAULT_VERSION"   = "~18"
+    "WEBSITE_NODE_DEFAULT_VERSION"   = "~16"
     "WEBSITE_CONTENTOVERVNET"        = "1"
-    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
   }
 
   site_config {
     vnet_route_all_enabled = true
+
+    use_32_bit_worker_process = false
 
     ftps_state = "Disabled"
   }
