@@ -165,6 +165,8 @@ resource "azurerm_logic_app_standard" "logic" {
   storage_account_access_key = azurerm_storage_account.logic[each.value].primary_access_key
   app_service_plan_id        = azurerm_service_plan.logic[each.value].id
 
+  virtual_network_subnet_id = azurerm_subnet.app_02[each.value].id
+
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"     = "node"
     "WEBSITE_NODE_DEFAULT_VERSION" = "~18"

@@ -44,8 +44,9 @@ resource "azurerm_linux_web_app" "app" {
 
   resource_group_name = azurerm_resource_group.app[each.value].name
   location            = azurerm_resource_group.app[each.value].location
+  service_plan_id     = azurerm_service_plan.app[each.value].id
 
-  service_plan_id = azurerm_service_plan.app[each.value].id
+  virtual_network_subnet_id = azurerm_subnet.app_03[each.value].id
 
   https_only = true
 
