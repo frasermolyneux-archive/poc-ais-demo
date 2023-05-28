@@ -1,20 +1,21 @@
 locals {
   private_dns_zones = {
     "azurewebsites" = "privatelink.azurewebsites.net",
-    "blob" = "privatelink.blob.core.windows.net",
-    "table" = "privatelink.table.core.windows.net",
-    "queue" = "privatelink.queue.core.windows.net",
-    "file" = "privatelink.file.core.windows.net",
-    "vault" = "privatelink.vaultcore.azure.net"
+    "blob"          = "privatelink.blob.core.windows.net",
+    "table"         = "privatelink.table.core.windows.net",
+    "queue"         = "privatelink.queue.core.windows.net",
+    "file"          = "privatelink.file.core.windows.net",
+    "vault"         = "privatelink.vaultcore.azure.net",
+    "servicebus"    = "privatelink.servicebus.windows.net",
   }
 
   location_private_dns_zones = flatten([
     for location in var.locations : [
       for private_dns_zone_key, private_dns_zone in local.private_dns_zones : {
-        key               = format("%s-%s", private_dns_zone_key, location)
-        location          = location
+        key                  = format("%s-%s", private_dns_zone_key, location)
+        location             = location
         private_dns_zone_key = private_dns_zone_key
-        private_dns_zone  = private_dns_zone
+        private_dns_zone     = private_dns_zone
       }
     ]
   ])
@@ -28,7 +29,7 @@ resource "azurerm_resource_group" "dns" {
 }
 
 resource "azurerm_private_dns_zone" "dns" {
-  for_each = {for key, value in local.private_dns_zones : key => value }
+  for_each = { for key, value in local.private_dns_zones : key => value }
 
   name                = each.value
   resource_group_name = azurerm_resource_group.dns.name

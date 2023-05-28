@@ -1,7 +1,7 @@
 resource "azurerm_resource_group" "kv" {
   for_each = toset(var.locations)
 
-  name     = format("rg-kv-%s-%s-%s-02", random_id.environment_id.hex, var.environment, each.value)
+  name     = format("rg-kv-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
   location = each.value
 
   tags = var.tags
@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "kv" {
 resource "azurerm_key_vault" "kv" {
   for_each = toset(var.locations)
 
-  name                = format("kv%s%s02", lower(random_string.location[each.value].result), var.environment)
+  name                = format("kv%s%s", lower(random_string.location[each.value].result), var.environment)
   location            = azurerm_resource_group.kv[each.value].location
   resource_group_name = azurerm_resource_group.kv[each.value].name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -61,7 +61,7 @@ resource "azurerm_key_vault_secret" "kv_example" {
 resource "azurerm_private_endpoint" "kv" {
   for_each = toset(var.locations)
 
-  name = format("pe-%s-vault-02", azurerm_key_vault.kv[each.value].name)
+  name = format("pe-%s-vault", azurerm_key_vault.kv[each.value].name)
 
   resource_group_name = azurerm_resource_group.kv[each.value].name
   location            = azurerm_resource_group.kv[each.value].location
@@ -76,7 +76,7 @@ resource "azurerm_private_endpoint" "kv" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-vault-02", azurerm_key_vault.kv[each.value].name)
+    name                           = format("pe-%s-vault", azurerm_key_vault.kv[each.value].name)
     private_connection_resource_id = azurerm_key_vault.kv[each.value].id
     subresource_names              = ["vault"]
     is_manual_connection           = false
