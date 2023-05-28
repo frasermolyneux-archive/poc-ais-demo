@@ -55,6 +55,7 @@ resource "azurerm_linux_web_app" "app" {
     "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.ai[each.value].connection_string
     "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
     "location"                                   = each.value
+    "servicebus_connection_string"               = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.app_sb[each.value].name)
   }
 
   site_config {
@@ -77,6 +78,10 @@ resource "azurerm_linux_web_app" "app" {
       name     = "RestrictToFrontDoor"
       priority = 1000
     }
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 }
 

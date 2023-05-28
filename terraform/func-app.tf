@@ -188,7 +188,13 @@ resource "azurerm_linux_function_app" "func" {
   content_share_force_disabled = true
 
   app_settings = {
-    https_only = true
+    "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.ai[each.value].instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.ai[each.value].connection_string
+    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.func_sb[each.value].name)
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 
   depends_on = [

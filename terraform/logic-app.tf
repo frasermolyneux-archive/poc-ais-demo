@@ -187,10 +187,12 @@ resource "azurerm_logic_app_standard" "logic" {
   https_only = true
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.ai[each.value].instrumentation_key
-    "FUNCTIONS_WORKER_RUNTIME"       = "node"
-    "WEBSITE_NODE_DEFAULT_VERSION"   = "~16"
-    "WEBSITE_CONTENTOVERVNET"        = "1"
+    "APPINSIGHTS_INSTRUMENTATIONKEY"        = azurerm_application_insights.ai[each.value].instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.ai[each.value].connection_string
+    "FUNCTIONS_WORKER_RUNTIME"              = "node"
+    "WEBSITE_NODE_DEFAULT_VERSION"          = "~16"
+    "WEBSITE_CONTENTOVERVNET"               = "1"
+    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.logic_sb[each.value].name)
   }
 
   site_config {
@@ -199,6 +201,10 @@ resource "azurerm_logic_app_standard" "logic" {
     use_32_bit_worker_process = false
 
     ftps_state = "Disabled"
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 
   depends_on = [
