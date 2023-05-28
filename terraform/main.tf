@@ -1,10 +1,13 @@
 terraform {
-  required_version = ">= 1.3.6"
+  required_version = ">= 1.4.6"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.35.0"
+      version = "~> 3.58.0"
+    }
+    azapi = {
+      source = "azure/azapi"
     }
   }
 
@@ -20,6 +23,8 @@ provider "azurerm" {
     }
   }
 }
+
+provider "azapi" {}
 
 data "azurerm_client_config" "current" {}
 
