@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "logic" {
 resource "azurerm_service_plan" "logic" {
   for_each = toset(var.locations)
 
-  name = format("sp-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  name = format("sp-logic-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
 
   resource_group_name = azurerm_resource_group.logic[each.value].name
   location            = azurerm_resource_group.logic[each.value].location
@@ -40,7 +40,7 @@ resource "azurerm_monitor_diagnostic_setting" "logic_svcplan" {
 resource "azurerm_storage_account" "logic" {
   for_each = toset(var.locations)
 
-  name = format("salg%s", lower(random_string.location[each.value].result))
+  name = format("sala%s", lower(random_string.location[each.value].result))
 
   resource_group_name = azurerm_resource_group.logic[each.value].name
   location            = azurerm_resource_group.logic[each.value].location

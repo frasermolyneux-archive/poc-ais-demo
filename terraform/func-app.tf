@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "func" {
 resource "azurerm_service_plan" "func" {
   for_each = toset(var.locations)
 
-  name = format("sp-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  name = format("sp-func-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
 
   resource_group_name = azurerm_resource_group.func[each.value].name
   location            = azurerm_resource_group.func[each.value].location
