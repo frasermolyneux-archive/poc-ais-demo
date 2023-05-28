@@ -55,7 +55,7 @@ resource "azurerm_servicebus_queue" "random_queue" {
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
-resource "azurerm_servicebus_queue" "random_queue" {
+resource "azurerm_servicebus_queue" "from_website" {
   for_each = toset(var.locations)
 
   name         = "from_website"
