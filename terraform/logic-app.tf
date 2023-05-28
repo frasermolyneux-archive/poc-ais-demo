@@ -52,8 +52,9 @@ resource "azurerm_storage_account" "logic" {
 
   public_network_access_enabled = false
 
+  // Ideally this should have public access disabled - for demo purposes we are leaving it enabled
   network_rules {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = ["AzureServices"]
   }
 }
