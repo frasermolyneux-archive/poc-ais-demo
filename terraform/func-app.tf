@@ -7,6 +7,36 @@ resource "azurerm_resource_group" "func" {
   tags = var.tags
 }
 
+resource "azurerm_service_plan" "func" {
+  for_each = toset(var.locations)
+
+  name = format("sp-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+
+  resource_group_name = azurerm_resource_group.func[each.value].name
+  location            = azurerm_resource_group.func[each.value].location
+
+  os_type  = "Linux"
+  sku_name = "P1v2"
+}
+
+resource "azurerm_monitor_diagnostic_setting" "func_svcplan" {
+  for_each = toset(var.locations)
+
+  name = azurerm_log_analytics_workspace.law.name
+
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
+
+  target_resource_id = azurerm_service_plan.func[each.value].id
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+}
+
 resource "azurerm_storage_account" "func" {
   for_each = toset(var.locations)
 
@@ -133,7 +163,7 @@ resource "azurerm_linux_function_app" "func" {
 
   storage_account_name       = azurerm_storage_account.func[each.value].name
   storage_account_access_key = azurerm_storage_account.func[each.value].primary_access_key
-  service_plan_id            = azurerm_service_plan.sp[each.value].id
+  service_plan_id            = azurerm_service_plan.func[each.value].id
 
   virtual_network_subnet_id = azurerm_subnet.app_01[each.value].id
 
