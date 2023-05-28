@@ -8,6 +8,11 @@ locals {
     name                = func_app.name
     resource_group_name = func_app.resource_group_name
   }]
+
+  logic_apps = [for logic_app in azurerm_logic_app_standard.logic : {
+    name                = logic_app.name
+    resource_group_name = logic_app.resource_group_name
+  }]
 }
 
 output "web_apps" {
@@ -16,4 +21,8 @@ output "web_apps" {
 
 output "func_apps" {
   value = local.func_apps
+}
+
+output "logic_apps" {
+  value = local.logic_apps
 }

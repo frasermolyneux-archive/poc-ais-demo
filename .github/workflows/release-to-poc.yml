@@ -34,6 +34,7 @@ jobs:
           cd terraform
           echo "web_apps=$(terraform output -json web_apps)" >> $GITHUB_OUTPUT
           echo "func_apps=$(terraform output -json func_apps)" >> $GITHUB_OUTPUT
+          echo "logic_apps=$(terraform output -json logic_apps)" >> $GITHUB_OUTPUT
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -43,6 +44,7 @@ jobs:
     outputs:
       web_apps: ${{ steps.terraform-output.outputs.web_apps }}
       func_apps: ${{ steps.terraform-output.outputs.func_apps }}
+      logic_apps: ${{ steps.terraform-output.outputs.logic_apps }}
 
   apps-ci:
     runs-on: ubuntu-latest
@@ -60,6 +62,11 @@ jobs:
       with:
         dotnet-project: "func-app"
         dotnet-version: 7.0.x
+        src-folder: "src"
+
+    - uses: frasermolyneux/actions/logic-app-ci@main
+      with:
+        logic-project: "logic-app"
         src-folder: "src"
 
   app-service-deploy-poc:
@@ -101,6 +108,27 @@ jobs:
         with:
           function-app-artifact-name: "func-app"
           function-app-name: ${{ matrix.func_app.name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  logic-app-deploy-poc:
+    environment: POC
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps) }}
+
+    needs: [apps-ci, terraform-plan-and-apply-poc]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-logic-app@main
+        with:
+          logic-app-artifact-name: "logic-app"
+          logic-app-name: ${{ matrix.func_app.name }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
