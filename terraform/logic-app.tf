@@ -155,7 +155,7 @@ resource "azurerm_private_endpoint" "logic_sa_file_pe" {
   }
 }
 
-resource "azurerm_logic_app_standard" "example" {
+resource "azurerm_logic_app_standard" "logic" {
   for_each = toset(var.locations)
 
   name = format("logic-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
