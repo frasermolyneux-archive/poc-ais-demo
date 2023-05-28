@@ -55,7 +55,7 @@ resource "azurerm_linux_web_app" "app" {
     "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.ai[each.value].connection_string
     "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
     "location"                                   = each.value
-    "servicebus_connection_string"               = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/app-%s-%s-%s-%s/)", random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name)
+    "servicebus_connection_string"               = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/app-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name)
   }
 
   site_config {
