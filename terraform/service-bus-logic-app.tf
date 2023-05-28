@@ -13,6 +13,6 @@ resource "azurerm_key_vault_secret" "logic_sb" {
   for_each = toset(var.locations)
 
   name         = format("%s-%s", azurerm_logic_app_standard.logic[each.value].name, azurerm_servicebus_namespace.sb[each.value].name)
-  value        = azurerm_servicebus_namespace_authorization_rule.logic.primary_connection_string
+  value        = azurerm_servicebus_namespace_authorization_rule.logic[each.value].primary_connection_string
   key_vault_id = azurerm_key_vault.kv[each.value].id
 }
