@@ -17,6 +17,6 @@ resource "azurerm_key_vault_secret" "logic_sb" {
   key_vault_id = azurerm_key_vault.kv[each.value].id
 
   depends_on = [
-    azurerm_role_assignment.azurerm_role_assignment.kv_sp,
+    azurerm_role_assignment.kv_sp,
   ]
 }
