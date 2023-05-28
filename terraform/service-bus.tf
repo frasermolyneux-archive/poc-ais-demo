@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "sb" {
 resource "azurerm_servicebus_namespace" "sb" {
   for_each = toset(var.locations)
 
-  name = local.service_bus_name
+  name = format("sb-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
 
   resource_group_name = azurerm_resource_group.sb[each.value].name
   location            = azurerm_resource_group.sb[each.value].location
