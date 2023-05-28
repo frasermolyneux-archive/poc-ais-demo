@@ -41,9 +41,9 @@ resource "azurerm_private_endpoint" "sb" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-namespaces", azurerm_servicebus_namespace.sb[each.value].name)
+    name                           = format("pe-%s-namespace", azurerm_servicebus_namespace.sb[each.value].name)
     private_connection_resource_id = azurerm_servicebus_namespace.sb[each.value].id
-    subresource_names              = ["namespaces"]
+    subresource_names              = ["namespace"]
     is_manual_connection           = false
   }
 }
