@@ -58,6 +58,8 @@ resource "azurerm_linux_web_app" "app" {
   }
 
   site_config {
+    vnet_route_all_enabled = true
+
     ftps_state = "Disabled"
 
     application_stack {

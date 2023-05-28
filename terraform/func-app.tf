@@ -167,8 +167,12 @@ resource "azurerm_linux_function_app" "func" {
 
   virtual_network_subnet_id = azurerm_subnet.app_01[each.value].id
 
+  https_only = true
+
   site_config {
     vnet_route_all_enabled = true
+
+    ftps_state = "Disabled"
 
     application_stack {
       dotnet_version = "7.0"

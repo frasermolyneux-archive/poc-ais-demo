@@ -167,9 +167,18 @@ resource "azurerm_logic_app_standard" "logic" {
 
   virtual_network_subnet_id = azurerm_subnet.app_02[each.value].id
 
+  https_only = true
+
   app_settings = {
     "FUNCTIONS_WORKER_RUNTIME"     = "node"
     "WEBSITE_NODE_DEFAULT_VERSION" = "~18"
+    "WEBSITE_CONTENTOVERVNET"      = "1"
+  }
+
+  site_config {
+    vnet_route_all_enabled = true
+
+    ftps_state = "Disabled"
   }
 
   depends_on = [
