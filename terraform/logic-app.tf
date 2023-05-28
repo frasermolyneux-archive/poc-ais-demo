@@ -158,6 +158,14 @@ resource "azurerm_private_endpoint" "logic_sa_file_pe" {
   }
 }
 
+resource "azurerm_storage_share" "logic" {
+  for_each = toset(var.locations)
+
+  name                 = format("logic-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  storage_account_name = azurerm_storage_account.logic[each.value].name
+  quota                = 50
+}
+
 resource "azurerm_logic_app_standard" "logic" {
   for_each = toset(var.locations)
 
@@ -170,6 +178,7 @@ resource "azurerm_logic_app_standard" "logic" {
 
   storage_account_name       = azurerm_storage_account.logic[each.value].name
   storage_account_access_key = azurerm_storage_account.logic[each.value].primary_access_key
+  storage_account_share_name = azurerm_storage_share.logic[each.value].name
   app_service_plan_id        = azurerm_service_plan.logic[each.value].id
 
   virtual_network_subnet_id = azurerm_subnet.app_02[each.value].id
