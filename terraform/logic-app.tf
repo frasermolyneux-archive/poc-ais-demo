@@ -51,6 +51,11 @@ resource "azurerm_storage_account" "logic" {
   min_tls_version = "TLS1_2"
 
   public_network_access_enabled = false
+
+  network_rules {
+    default_action = "Deny"
+    bypass         = ["AzureServices"]
+  }
 }
 
 resource "azurerm_private_endpoint" "logic_sa_blob_pe" {
