@@ -36,7 +36,7 @@ resource "azurerm_private_endpoint" "func_sa_blob_pe" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      azurerm_private_dns_zone.blob.id,
+      azurerm_private_dns_zone.dns["blob"].id,
     ]
   }
 
@@ -61,7 +61,7 @@ resource "azurerm_private_endpoint" "func_sa_table_pe" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      azurerm_private_dns_zone.table.id,
+      azurerm_private_dns_zone.dns["table"].id,
     ]
   }
 
@@ -86,7 +86,7 @@ resource "azurerm_private_endpoint" "func_sa_queue_pe" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      azurerm_private_dns_zone.queue.id,
+      azurerm_private_dns_zone.dns["queue"].id,
     ]
   }
 
@@ -111,7 +111,7 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      azurerm_private_dns_zone.file.id,
+      azurerm_private_dns_zone.dns["file"].id,
     ]
   }
 
@@ -146,7 +146,7 @@ resource "azurerm_linux_function_app" "func" {
   }
 
   // This is required to prevent the `WEBSITE_CONTENTSHARE` and `WEBSITE_CONTENTAZUREFILECONNECTIONSTRING` being added as these app settings aren't required for Linux apps on Elastic Premium.
-  content_share_force_disabled = true 
+  content_share_force_disabled = true
 
   app_settings = {
     https_only = true
