@@ -50,11 +50,10 @@ resource "azurerm_storage_account" "logic" {
 
   min_tls_version = "TLS1_2"
 
-  public_network_access_enabled = true
+  public_network_access_enabled = false
 
-  // Ideally this should have public access disabled - for demo purposes we are leaving it enabled
   network_rules {
-    default_action = "Allow"
+    default_action = "Deny"
     bypass         = ["AzureServices"]
   }
 }
