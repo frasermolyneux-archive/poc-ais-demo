@@ -50,10 +50,12 @@ resource "azurerm_storage_account" "logic" {
 
   min_tls_version = "TLS1_2"
 
-  public_network_access_enabled = false
+
+  // Public network access must be enabled for the demo as the GitHub Actions runner is not network connected.
+  public_network_access_enabled = true
 
   network_rules {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = ["AzureServices"]
   }
 }
