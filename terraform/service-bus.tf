@@ -62,6 +62,13 @@ resource "azurerm_servicebus_queue" "from_website" {
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
+resource "azurerm_servicebus_queue" "files_in" {
+  for_each = toset(var.locations)
+
+  name         = "files-in"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "sb" {
   for_each = toset(var.locations)
 
