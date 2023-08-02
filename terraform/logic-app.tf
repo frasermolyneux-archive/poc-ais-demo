@@ -216,3 +216,34 @@ resource "azurerm_logic_app_standard" "logic" {
     azurerm_private_endpoint.logic_sa_file_pe
   ]
 }
+
+resource "azurerm_monitor_diagnostic_setting" "logic" {
+  name = "diagnostic-to-log-analytics"
+
+  target_resource_id         = azurerm_logic_app_standard.logic.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "WorkflowRuntime"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "FunctionAppLogs"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+}

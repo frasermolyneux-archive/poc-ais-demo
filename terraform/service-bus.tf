@@ -61,3 +61,50 @@ resource "azurerm_servicebus_queue" "from_website" {
   name         = "from_website"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
+
+resource "azurerm_monitor_diagnostic_setting" "sb" {
+  name = "diagnostic-to-log-analytics"
+
+  target_resource_id         = azurerm_servicebus_namespace.sb.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
+
+  metric {
+    category = "AllMetrics"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "OperationalLogs"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "VNetAndIPFilteringLogs"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "RuntimeAuditLogs"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+
+  enabled_log {
+    category = "ApplicationMetricsLogs"
+
+    retention_policy {
+      enabled = false
+    }
+  }
+}
