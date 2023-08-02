@@ -208,6 +208,13 @@ resource "azurerm_linux_function_app" "func" {
   ]
 }
 
+data "azurerm_function_app_host_keys" "func" {
+  for_each = toset(var.locations)
+
+  name                = azurerm_linux_function_app.func[each.value].name
+  resource_group_name = azurerm_resource_group.func[each.value].name
+}
+
 resource "azurerm_monitor_diagnostic_setting" "func" {
   for_each = toset(var.locations)
 
