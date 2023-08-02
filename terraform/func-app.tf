@@ -194,7 +194,8 @@ resource "azurerm_linux_function_app" "func" {
   content_share_force_disabled = true
 
   app_settings = {
-    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name)
+    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name),
+    "ingest_connection_string"     = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.ingest_connection_string[each.value].name)
   }
 
   identity {

@@ -23,3 +23,10 @@ resource "azurerm_storage_account" "ingest" {
     default_action = "Allow"
   }
 }
+
+// Create a container named 'files-in' for the storage account
+resource "azurerm_storage_container" "files-in" {
+  name                  = "files-in"
+  storage_account_name  = azurerm_storage_account.ingest.name
+  container_access_type = "private"
+}
