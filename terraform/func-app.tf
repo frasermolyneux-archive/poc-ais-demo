@@ -209,9 +209,11 @@ resource "azurerm_linux_function_app" "func" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "func" {
+  for_each = toset(var.locations)
+
   name = "diagnostic-to-log-analytics"
 
-  target_resource_id         = azurerm_linux_function_app.func.id
+  target_resource_id         = azurerm_linux_function_app.func[each.value].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
   metric {

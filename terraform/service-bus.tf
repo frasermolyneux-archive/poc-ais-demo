@@ -63,9 +63,11 @@ resource "azurerm_servicebus_queue" "from_website" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "sb" {
+  for_each = toset(var.locations)
+
   name = "diagnostic-to-log-analytics"
 
-  target_resource_id         = azurerm_servicebus_namespace.sb.id
+  target_resource_id         = azurerm_servicebus_namespace.sb[each.value].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
   metric {

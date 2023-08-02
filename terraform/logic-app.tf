@@ -218,9 +218,11 @@ resource "azurerm_logic_app_standard" "logic" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "logic" {
+  for_each = toset(var.locations)
+
   name = "diagnostic-to-log-analytics"
 
-  target_resource_id         = azurerm_logic_app_standard.logic.id
+  target_resource_id         = azurerm_logic_app_standard.logic[each.value].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
   metric {
