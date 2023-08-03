@@ -9,7 +9,7 @@ locals {
     instances = [for func_app in local.func_apps_instances : {
       name                = azurerm_linux_function_app.func[func_app.key].name
       resource_group_name = azurerm_linux_function_app.func[func_app.key].resource_group_name
-    } if func_app.name == role]
+    } if func_app.role == role]
   }]
 
   logic_apps = [for logic_app in azurerm_logic_app_standard.logic : {
