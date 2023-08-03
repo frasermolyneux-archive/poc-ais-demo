@@ -14,10 +14,6 @@ locals {
     }
   ]
 
-  func_app_map = { for item in local.func_apps :
-    keys(item)[0] => values(item)[0]
-  }
-
   logic_apps = [for logic_app in azurerm_logic_app_standard.logic : {
     name                = logic_app.name
     resource_group_name = logic_app.resource_group_name
@@ -29,7 +25,7 @@ output "web_apps" {
 }
 
 output "func_apps" {
-  value = local.func_app_map
+  value = { for item in local.func_apps : "${item.key}" => item }
 }
 
 output "logic_apps" {
