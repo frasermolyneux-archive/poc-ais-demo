@@ -1,5 +1,5 @@
 locals {
-  func_apps = flatten([
+  func_apps_instances = flatten([
     for location in var.locations : [
       for role in var.func_app_roles : {
         key          = format("fa-%s-%s-%s-%s", role, random_id.environment_id.hex, var.environment, location)
@@ -51,7 +51,7 @@ resource "azurerm_monitor_diagnostic_setting" "func_svcplan" {
 }
 
 resource "azurerm_storage_account" "func" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = eaxh.value.storage_name
 
@@ -72,7 +72,7 @@ resource "azurerm_storage_account" "func" {
 }
 
 resource "azurerm_private_endpoint" "func_sa_blob_pe" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = format("pe-%s-blob", azurerm_storage_account.func[each].name)
 
@@ -97,7 +97,7 @@ resource "azurerm_private_endpoint" "func_sa_blob_pe" {
 }
 
 resource "azurerm_private_endpoint" "func_sa_table_pe" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = format("pe-%s-table", azurerm_storage_account.func[each].name)
 
@@ -122,7 +122,7 @@ resource "azurerm_private_endpoint" "func_sa_table_pe" {
 }
 
 resource "azurerm_private_endpoint" "func_sa_queue_pe" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = format("pe-%s-queue", azurerm_storage_account.func[each].name)
 
@@ -147,7 +147,7 @@ resource "azurerm_private_endpoint" "func_sa_queue_pe" {
 }
 
 resource "azurerm_private_endpoint" "func_sa_file_pe" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = format("pe-%s-file", azurerm_storage_account.func[each].name)
 
@@ -172,7 +172,7 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
 }
 
 resource "azurerm_linux_function_app" "func" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = each
 
@@ -224,14 +224,14 @@ resource "azurerm_linux_function_app" "func" {
 }
 
 data "azurerm_function_app_host_keys" "func" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name                = azurerm_linux_function_app.func[each].name
   resource_group_name = azurerm_resource_group.func[each.value.location].name
 }
 
 resource "azurerm_monitor_diagnostic_setting" "func" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name = "diagnostic-to-log-analytics"
 

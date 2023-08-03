@@ -6,9 +6,9 @@ locals {
 
   func_apps = [for role in var.func_app_roles : {
     role = role
-    instances = [for func_app in azurerm_linux_function_app.func : {
-      name                = func_app.name
-      resource_group_name = func_app.resource_group_name
+    instances = [for func_app in local.func_apps_instances : {
+      name                = azurerm_linux_function_app.func[func_app.key].name
+      resource_group_name = azurerm_linux_function_app.func[func_app.key].resource_group_name
     } if func_app.name == role]
   }]
 

@@ -31,7 +31,7 @@ resource "azurerm_role_assignment" "app" {
 }
 
 resource "azurerm_role_assignment" "func" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   scope                = azurerm_key_vault.kv[each.value.location].id
   role_definition_name = "Key Vault Secrets User"

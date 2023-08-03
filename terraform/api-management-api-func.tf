@@ -1,5 +1,5 @@
 resource "azurerm_api_management_named_value" "funcapp_host_key_named_value" {
-  for_each = { for each in local.func_apps : each.key => each }
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
   name                = azurerm_key_vault_secret.functionapp_host_key[each].name
   resource_group_name = azurerm_resource_group.apim.name
