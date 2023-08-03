@@ -35,7 +35,7 @@ resource "azurerm_role_assignment" "func" {
 
   scope                = azurerm_key_vault.kv[each.value.location].id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_linux_function_app.func[each].identity.0.principal_id
+  principal_id         = azurerm_linux_function_app.func[each.key].identity.0.principal_id
 }
 
 resource "azurerm_role_assignment" "logic" {

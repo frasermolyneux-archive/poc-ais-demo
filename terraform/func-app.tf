@@ -74,7 +74,7 @@ resource "azurerm_storage_account" "func" {
 resource "azurerm_private_endpoint" "func_sa_blob_pe" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = format("pe-%s-blob", azurerm_storage_account.func[each].name)
+  name = format("pe-%s-blob", azurerm_storage_account.func[each.key].name)
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
@@ -89,8 +89,8 @@ resource "azurerm_private_endpoint" "func_sa_blob_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-blob", azurerm_storage_account.func[each].name)
-    private_connection_resource_id = azurerm_storage_account.func[each].id
+    name                           = format("pe-%s-blob", azurerm_storage_account.func[each.key].name)
+    private_connection_resource_id = azurerm_storage_account.func[each.key].id
     subresource_names              = ["blob"]
     is_manual_connection           = false
   }
@@ -99,7 +99,7 @@ resource "azurerm_private_endpoint" "func_sa_blob_pe" {
 resource "azurerm_private_endpoint" "func_sa_table_pe" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = format("pe-%s-table", azurerm_storage_account.func[each].name)
+  name = format("pe-%s-table", azurerm_storage_account.func[each.key].name)
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
@@ -114,8 +114,8 @@ resource "azurerm_private_endpoint" "func_sa_table_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-table", azurerm_storage_account.func[each].name)
-    private_connection_resource_id = azurerm_storage_account.func[each].id
+    name                           = format("pe-%s-table", azurerm_storage_account.func[each.key].name)
+    private_connection_resource_id = azurerm_storage_account.func[each.key].id
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
@@ -124,7 +124,7 @@ resource "azurerm_private_endpoint" "func_sa_table_pe" {
 resource "azurerm_private_endpoint" "func_sa_queue_pe" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = format("pe-%s-queue", azurerm_storage_account.func[each].name)
+  name = format("pe-%s-queue", azurerm_storage_account.func[each.key].name)
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
@@ -139,8 +139,8 @@ resource "azurerm_private_endpoint" "func_sa_queue_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-queue", azurerm_storage_account.func[each].name)
-    private_connection_resource_id = azurerm_storage_account.func[each].id
+    name                           = format("pe-%s-queue", azurerm_storage_account.func[each.key].name)
+    private_connection_resource_id = azurerm_storage_account.func[each.key].id
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
@@ -149,7 +149,7 @@ resource "azurerm_private_endpoint" "func_sa_queue_pe" {
 resource "azurerm_private_endpoint" "func_sa_file_pe" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = format("pe-%s-file", azurerm_storage_account.func[each].name)
+  name = format("pe-%s-file", azurerm_storage_account.func[each.key].name)
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
@@ -164,8 +164,8 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-file", azurerm_storage_account.func[each].name)
-    private_connection_resource_id = azurerm_storage_account.func[each].id
+    name                           = format("pe-%s-file", azurerm_storage_account.func[each.key].name)
+    private_connection_resource_id = azurerm_storage_account.func[each.key].id
     subresource_names              = ["file"]
     is_manual_connection           = false
   }
@@ -179,8 +179,8 @@ resource "azurerm_linux_function_app" "func" {
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
 
-  storage_account_name       = azurerm_storage_account.func[each].name
-  storage_account_access_key = azurerm_storage_account.func[each].primary_access_key
+  storage_account_name       = azurerm_storage_account.func[each.key].name
+  storage_account_access_key = azurerm_storage_account.func[each.key].primary_access_key
   service_plan_id            = azurerm_service_plan.func[each.value.location].id
 
   virtual_network_subnet_id = azurerm_subnet.app_01[each.value.location].id
@@ -226,7 +226,7 @@ resource "azurerm_linux_function_app" "func" {
 data "azurerm_function_app_host_keys" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name                = azurerm_linux_function_app.func[each].name
+  name                = azurerm_linux_function_app.func[each.key].name
   resource_group_name = azurerm_resource_group.func[each.value.location].name
 }
 
@@ -235,7 +235,7 @@ resource "azurerm_monitor_diagnostic_setting" "func" {
 
   name = "diagnostic-to-log-analytics"
 
-  target_resource_id         = azurerm_linux_function_app.func[each].id
+  target_resource_id         = azurerm_linux_function_app.func[each.key].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
   metric {
