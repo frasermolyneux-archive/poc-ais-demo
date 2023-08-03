@@ -70,7 +70,12 @@ jobs:
 
     - uses: frasermolyneux/actions/logic-app-ci@main
       with:
-        logic-project: "logic-app"
+        logic-project: "logic-app-pub"
+        src-folder: "src"
+
+    - uses: frasermolyneux/actions/logic-app-ci@main
+      with:
+        logic-project: "logic-app-sub"
         src-folder: "src"
 
   app-service-deploy-poc:
@@ -95,13 +100,13 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  func-app-deploy-pub1-poc:
+  func-app-deploy-pub-poc:
     environment: POC
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).pub1.instances }}
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).pub.instances }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
@@ -116,13 +121,13 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  func-app-deploy-sub1-poc:
+  func-app-deploy-sub-poc:
     environment: POC
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).sub1.instances }}
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).sub.instances }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
@@ -137,13 +142,34 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  logic-app-deploy-poc:
+  func-app-deploy-bus-poc:
     environment: POC
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps) }}
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).bus.instances }}
+
+    needs: [apps-ci, terraform-plan-and-apply-poc]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-function-app@main
+        with:
+          function-app-artifact-name: "func-app"
+          function-app-name: ${{ matrix.func_app.name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  logic-app-deploy-pub-poc:
+    environment: POC
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.pub.instances) }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
@@ -152,7 +178,28 @@ jobs:
 
       - uses: frasermolyneux/actions/deploy-logic-app@main
         with:
-          logic-app-artifact-name: "logic-app"
+          logic-app-artifact-name: "logic-app-pub"
+          logic-app-name: ${{ matrix.func_app.name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  logic-app-deploy-sub-poc:
+    environment: POC
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.sub.instances) }}
+
+    needs: [apps-ci, terraform-plan-and-apply-poc]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-logic-app@main
+        with:
+          logic-app-artifact-name: "logic-app-sub"
           logic-app-name: ${{ matrix.func_app.name }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

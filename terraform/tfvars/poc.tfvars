@@ -8,6 +8,10 @@ address_spaces = {
   //"ukwest"  = "10.1.0.0/16"
 }
 
+func_app_roles = ["pub", "sub", "bus"]
+
+logic_app_roles = ["pub", "sub"]
+
 subnets = {
   "uksouth" = {
     "endpoints" = "10.0.1.0/24",

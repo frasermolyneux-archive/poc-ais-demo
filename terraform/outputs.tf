@@ -14,10 +14,15 @@ locals {
     }
   ]
 
-  logic_apps = [for logic_app in azurerm_logic_app_standard.logic : {
-    name                = logic_app.name
-    resource_group_name = logic_app.resource_group_name
-  }]
+  logic_apps = [
+    for role in var.logic_app_roles : {
+      key = role
+      instances = [for logic_app in local.logic_apps_instances : {
+        name                = azurerm_logic_app_standard.logic[logic_app.key].name
+        resource_group_name = azurerm_logic_app_standard.logic[logic_app.key].resource_group_name
+      } if logic_app.role == role]
+    }
+  ]
 }
 
 output "web_apps" {
@@ -29,5 +34,5 @@ output "func_apps" {
 }
 
 output "logic_apps" {
-  value = local.logic_apps
+  value = { for item in local.logic_apps : "${item.key}" => item }
 }
