@@ -53,7 +53,7 @@ resource "azurerm_monitor_diagnostic_setting" "func_svcplan" {
 resource "azurerm_storage_account" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = eaxh.value.storage_name
+  name = each.value.storage_name
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
