@@ -12,7 +12,7 @@ resource "azurerm_servicebus_namespace_authorization_rule" "logic" {
 resource "azurerm_key_vault_secret" "logic_sb" {
   for_each = { for each in local.logic_apps_instances : each.key => each }
 
-  name         = format("%s-%s", azurerm_logic_app_standard.logic[each.key].name, azurerm_servicebus_namespace.sb[each.value].name)
+  name         = format("%s-%s", azurerm_logic_app_standard.logic[each.key].name, azurerm_servicebus_namespace.sb[each.value.location].name)
   value        = azurerm_servicebus_namespace_authorization_rule.logic[each.key].primary_connection_string
   key_vault_id = azurerm_key_vault.kv[each.value.location].id
 
