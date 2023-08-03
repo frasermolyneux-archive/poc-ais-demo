@@ -16,6 +16,14 @@ variable "address_spaces" {}
 
 variable "subnets" {}
 
+variable "func_app_roles" {
+  default = ["sub1", "pub1"]
+}
+
+variable "logic_app_roles" {
+  default = ["sub1", "pub1"]
+}
+
 variable "tags" {
   default = {}
 }

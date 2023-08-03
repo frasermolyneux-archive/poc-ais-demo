@@ -1,3 +1,16 @@
+locals {
+  func_apps = flatten([
+    for location in var.locations : [
+      for role in var.func_app_roles : {
+        key          = format("fa-%s-%s-%s-%s", role, random_id.environment_id.hex, var.environment, location)
+        storage_name = format("safn%s%s", role, lower(random_string.location[location].result))
+        role         = role
+        location     = location
+      }
+    ]
+  ])
+}
+
 resource "azurerm_resource_group" "func" {
   for_each = toset(var.locations)
 
@@ -38,12 +51,12 @@ resource "azurerm_monitor_diagnostic_setting" "func_svcplan" {
 }
 
 resource "azurerm_storage_account" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("safn%s", lower(random_string.location[each.value].result))
+  name = eaxh.value.storage_name
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -59,14 +72,14 @@ resource "azurerm_storage_account" "func" {
 }
 
 resource "azurerm_private_endpoint" "func_sa_blob_pe" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("pe-%s-blob", azurerm_storage_account.func[each.value].name)
+  name = format("pe-%s-blob", azurerm_storage_account.func[each].name)
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
-  subnet_id = azurerm_subnet.endpoints[each.value].id
+  subnet_id = azurerm_subnet.endpoints[each.value.location].id
 
   private_dns_zone_group {
     name = "default"
@@ -76,22 +89,22 @@ resource "azurerm_private_endpoint" "func_sa_blob_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-blob", azurerm_storage_account.func[each.value].name)
-    private_connection_resource_id = azurerm_storage_account.func[each.value].id
+    name                           = format("pe-%s-blob", azurerm_storage_account.func[each].name)
+    private_connection_resource_id = azurerm_storage_account.func[each].id
     subresource_names              = ["blob"]
     is_manual_connection           = false
   }
 }
 
 resource "azurerm_private_endpoint" "func_sa_table_pe" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("pe-%s-table", azurerm_storage_account.func[each.value].name)
+  name = format("pe-%s-table", azurerm_storage_account.func[each].name)
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
-  subnet_id = azurerm_subnet.endpoints[each.value].id
+  subnet_id = azurerm_subnet.endpoints[each.value.location].id
 
   private_dns_zone_group {
     name = "default"
@@ -101,22 +114,22 @@ resource "azurerm_private_endpoint" "func_sa_table_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-table", azurerm_storage_account.func[each.value].name)
-    private_connection_resource_id = azurerm_storage_account.func[each.value].id
+    name                           = format("pe-%s-table", azurerm_storage_account.func[each].name)
+    private_connection_resource_id = azurerm_storage_account.func[each].id
     subresource_names              = ["table"]
     is_manual_connection           = false
   }
 }
 
 resource "azurerm_private_endpoint" "func_sa_queue_pe" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("pe-%s-queue", azurerm_storage_account.func[each.value].name)
+  name = format("pe-%s-queue", azurerm_storage_account.func[each].name)
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
-  subnet_id = azurerm_subnet.endpoints[each.value].id
+  subnet_id = azurerm_subnet.endpoints[each.value.location].id
 
   private_dns_zone_group {
     name = "default"
@@ -126,22 +139,22 @@ resource "azurerm_private_endpoint" "func_sa_queue_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-queue", azurerm_storage_account.func[each.value].name)
-    private_connection_resource_id = azurerm_storage_account.func[each.value].id
+    name                           = format("pe-%s-queue", azurerm_storage_account.func[each].name)
+    private_connection_resource_id = azurerm_storage_account.func[each].id
     subresource_names              = ["queue"]
     is_manual_connection           = false
   }
 }
 
 resource "azurerm_private_endpoint" "func_sa_file_pe" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("pe-%s-file", azurerm_storage_account.func[each.value].name)
+  name = format("pe-%s-file", azurerm_storage_account.func[each].name)
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
-  subnet_id = azurerm_subnet.endpoints[each.value].id
+  subnet_id = azurerm_subnet.endpoints[each.value.location].id
 
   private_dns_zone_group {
     name = "default"
@@ -151,34 +164,34 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-file", azurerm_storage_account.func[each.value].name)
-    private_connection_resource_id = azurerm_storage_account.func[each.value].id
+    name                           = format("pe-%s-file", azurerm_storage_account.func[each].name)
+    private_connection_resource_id = azurerm_storage_account.func[each].id
     subresource_names              = ["file"]
     is_manual_connection           = false
   }
 }
 
 resource "azurerm_linux_function_app" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name = format("fa-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
+  name = each
 
-  resource_group_name = azurerm_resource_group.func[each.value].name
-  location            = azurerm_resource_group.func[each.value].location
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
+  location            = azurerm_resource_group.func[each.value.location].location
 
-  storage_account_name       = azurerm_storage_account.func[each.value].name
-  storage_account_access_key = azurerm_storage_account.func[each.value].primary_access_key
-  service_plan_id            = azurerm_service_plan.func[each.value].id
+  storage_account_name       = azurerm_storage_account.func[each].name
+  storage_account_access_key = azurerm_storage_account.func[each].primary_access_key
+  service_plan_id            = azurerm_service_plan.func[each.value.location].id
 
-  virtual_network_subnet_id = azurerm_subnet.app_01[each.value].id
+  virtual_network_subnet_id = azurerm_subnet.app_01[each.value.location].id
 
   https_only = true
 
   site_config {
     always_on = true
 
-    application_insights_key               = azurerm_application_insights.ai[each.value].instrumentation_key
-    application_insights_connection_string = azurerm_application_insights.ai[each.value].connection_string
+    application_insights_key               = azurerm_application_insights.ai[each.value.location].instrumentation_key
+    application_insights_connection_string = azurerm_application_insights.ai[each.value.location].connection_string
 
     vnet_route_all_enabled = true
 
@@ -194,8 +207,8 @@ resource "azurerm_linux_function_app" "func" {
   content_share_force_disabled = true
 
   app_settings = {
-    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value].name, random_id.environment_id.hex, var.environment, each.value, azurerm_servicebus_namespace.sb[each.value].name),
-    "ingest_connection_string"     = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.ingest_connection_string[each.value].name)
+    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value.location].name, random_id.environment_id.hex, var.environment, each.value.location, azurerm_servicebus_namespace.sb[each.value.location].name),
+    "ingest_connection_string"     = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.ingest_connection_string[each.value.location].name)
   }
 
   identity {
@@ -211,18 +224,18 @@ resource "azurerm_linux_function_app" "func" {
 }
 
 data "azurerm_function_app_host_keys" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  name                = azurerm_linux_function_app.func[each.value].name
-  resource_group_name = azurerm_resource_group.func[each.value].name
+  name                = azurerm_linux_function_app.func[each].name
+  resource_group_name = azurerm_resource_group.func[each.value.location].name
 }
 
 resource "azurerm_monitor_diagnostic_setting" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
   name = "diagnostic-to-log-analytics"
 
-  target_resource_id         = azurerm_linux_function_app.func[each.value].id
+  target_resource_id         = azurerm_linux_function_app.func[each].id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
 
   metric {

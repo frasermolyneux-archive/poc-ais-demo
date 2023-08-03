@@ -31,11 +31,11 @@ resource "azurerm_role_assignment" "app" {
 }
 
 resource "azurerm_role_assignment" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps : each.key => each }
 
-  scope                = azurerm_key_vault.kv[each.value].id
+  scope                = azurerm_key_vault.kv[each.value.location].id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_linux_function_app.func[each.value].identity.0.principal_id
+  principal_id         = azurerm_linux_function_app.func[each].identity.0.principal_id
 }
 
 resource "azurerm_role_assignment" "logic" {
