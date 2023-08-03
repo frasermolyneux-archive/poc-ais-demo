@@ -174,7 +174,7 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
 resource "azurerm_linux_function_app" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = each
+  name = each.key
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location
