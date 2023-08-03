@@ -95,13 +95,34 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  func-app-deploy-poc:
+  func-app-deploy-pub1-poc:
     environment: POC
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps) }}
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).pub1.instances }}
+
+    needs: [apps-ci, terraform-plan-and-apply-poc]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-function-app@main
+        with:
+          function-app-artifact-name: "func-app"
+          function-app-name: ${{ matrix.func_app.name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  func-app-deploy-sub1-poc:
+    environment: POC
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.func_apps).sub1.instances }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
