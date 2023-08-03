@@ -5,13 +5,13 @@ locals {
   }]
 
   func_apps = [
-    for role in var.func_app_roles : [{
+    for role in var.func_app_roles : {
       key = role
       instances = [for func_app in local.func_apps_instances : {
         name                = azurerm_linux_function_app.func[func_app.key].name
         resource_group_name = azurerm_linux_function_app.func[func_app.key].resource_group_name
       } if func_app.role == role]
-    }]
+    }
   ]
 
   func_app_map = { for item in local.func_apps :
