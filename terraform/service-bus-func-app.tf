@@ -1,8 +1,8 @@
 resource "azurerm_servicebus_namespace_authorization_rule" "func" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name         = azurerm_linux_function_app.func[each.value].name
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+  name         = azurerm_linux_function_app.func[each.key].name
+  namespace_id = azurerm_servicebus_namespace.sb[each.value.location].id
 
   listen = true
   send   = true
@@ -10,11 +10,11 @@ resource "azurerm_servicebus_namespace_authorization_rule" "func" {
 }
 
 resource "azurerm_key_vault_secret" "func_sb" {
-  for_each = toset(var.locations)
+  for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name         = format("%s-%s", azurerm_linux_function_app.func[each.value].name, azurerm_servicebus_namespace.sb[each.value].name)
-  value        = azurerm_servicebus_namespace_authorization_rule.func[each.value].primary_connection_string
-  key_vault_id = azurerm_key_vault.kv[each.value].id
+  name         = format("%s-%s", azurerm_linux_function_app.func[each.key].name, azurerm_servicebus_namespace.sb[each.value.location].name)
+  value        = azurerm_servicebus_namespace_authorization_rule.func[each.key].primary_connection_string
+  key_vault_id = azurerm_key_vault.kv[each.value.location].id
 
   depends_on = [
     azurerm_role_assignment.kv_sp,
