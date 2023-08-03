@@ -38,6 +38,7 @@ jobs:
           echo "web_apps=$(terraform output -json web_apps)" >> $GITHUB_OUTPUT
           echo "func_apps=$(terraform output -json func_apps)" >> $GITHUB_OUTPUT
           echo "logic_apps=$(terraform output -json logic_apps)" >> $GITHUB_OUTPUT
+          echo "$(terraform output -json func_apps)"
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
