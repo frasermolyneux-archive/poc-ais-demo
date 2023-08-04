@@ -17,6 +17,8 @@ resource "azurerm_eventhub_namespace" "eh" {
 
   tags = var.tags
 
+  zone_redundant = false
+
   sku      = "Premium"
   capacity = 1
 }
