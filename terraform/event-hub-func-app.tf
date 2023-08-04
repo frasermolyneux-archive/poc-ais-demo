@@ -12,7 +12,7 @@ resource "azurerm_eventhub_authorization_rule" "func" {
   manage = false
 }
 
-resource "azurerm_key_vault_secret" "func_sb" {
+resource "azurerm_key_vault_secret" "func_eh" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
   name         = format("%s-%s", azurerm_linux_function_app.func[each.key].name, azurerm_eventhub.eh_business_notifications[each.value.location].name)
