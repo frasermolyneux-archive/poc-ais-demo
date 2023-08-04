@@ -24,7 +24,7 @@
                 "requestBody": {
                     "content": {
                         "application/json": {
-                            "eventPayload": {
+                            "example": {
                                 "id": "AAAABBBBCCCCDDDDEEEE1234567890ZZ",
                                 "type": "someType",
                                 "payload": "AAAABBBBCCCCDDDDEEEE1234567890ZZ"
