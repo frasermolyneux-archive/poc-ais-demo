@@ -39,6 +39,7 @@ jobs:
           echo "func_apps=$(terraform output -json func_apps)" >> $GITHUB_OUTPUT
           echo "logic_apps=$(terraform output -json logic_apps)" >> $GITHUB_OUTPUT
           echo "$(terraform output -json func_apps)"
+          echo "$(terraform output -json logic_apps)"
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -169,7 +170,7 @@ jobs:
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.pub.instances) }}
+        logic_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.pub.instances) }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
@@ -179,7 +180,7 @@ jobs:
       - uses: frasermolyneux/actions/deploy-logic-app@main
         with:
           logic-app-artifact-name: "logic-app-pub"
-          logic-app-name: ${{ matrix.func_app.name }}
+          logic-app-name: ${{ matrix.logic_app.name }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -190,7 +191,7 @@ jobs:
 
     strategy:
       matrix:
-        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.sub.instances) }}
+        logic_app: ${{ fromJSON(needs.terraform-plan-and-apply-poc.outputs.logic_apps.sub.instances) }}
 
     needs: [apps-ci, terraform-plan-and-apply-poc]
 
@@ -200,7 +201,7 @@ jobs:
       - uses: frasermolyneux/actions/deploy-logic-app@main
         with:
           logic-app-artifact-name: "logic-app-sub"
-          logic-app-name: ${{ matrix.func_app.name }}
+          logic-app-name: ${{ matrix.logic_app.name }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
