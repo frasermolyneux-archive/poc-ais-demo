@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "func_app": {
+    "func_app_sub": {
       "commandName": "Project",
       "commandLineArgs": "--port 7270",
       "launchBrowser": false

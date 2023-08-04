@@ -1,8 +1,8 @@
 {
-    "azureFunctions.deploySubpath": "src\\func-app/bin/Release/net7.0/publish",
+    "azureFunctions.deploySubpath": "src\\func-app-bus/bin/Release/net7.0/publish",
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "publish (functions)",
-    "azureFunctions.projectSubpath": "src\\func-app"
+    "azureFunctions.projectSubpath": "src\\func-app-bus"
 }

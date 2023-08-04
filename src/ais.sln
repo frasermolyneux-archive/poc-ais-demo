@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app", "func-app\func-app.csproj", "{F41CEFF8-83A2-458F-837B-DA73BDD29A72}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "web-app", "web-app\web-app.csproj", "{E7E652EB-11F0-4353-87A0-49B3391510F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-bus", "func-app-bus\func-app-bus.csproj", "{EE3D4719-CF39-4145-93BA-1BBB8BEF76B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-pub", "func-app-pub\func-app-pub.csproj", "{0368729A-3B48-4CBC-A56F-6EEDDA00271D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-sub", "func-app-sub\func-app-sub.csproj", "{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,17 @@ Global
 		{E7E652EB-11F0-4353-87A0-49B3391510F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7E652EB-11F0-4353-87A0-49B3391510F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7E652EB-11F0-4353-87A0-49B3391510F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3D4719-CF39-4145-93BA-1BBB8BEF76B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3D4719-CF39-4145-93BA-1BBB8BEF76B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3D4719-CF39-4145-93BA-1BBB8BEF76B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3D4719-CF39-4145-93BA-1BBB8BEF76B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0368729A-3B48-4CBC-A56F-6EEDDA00271D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0368729A-3B48-4CBC-A56F-6EEDDA00271D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0368729A-3B48-4CBC-A56F-6EEDDA00271D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0368729A-3B48-4CBC-A56F-6EEDDA00271D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
