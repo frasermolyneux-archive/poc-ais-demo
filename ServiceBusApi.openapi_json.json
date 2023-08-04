@@ -1,0 +1,65 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Service Bus API",
+        "description": "",
+        "version": "1.0"
+    },
+    "paths": {
+        "/PostMessage": {
+            "post": {
+                "summary": "PostMessage",
+                "description": "PostMessage",
+                "operationId": "PostMessage",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "eventPayload": {
+                                "id": "AAAABBBBCCCCDDDDEEEE1234567890ZZ",
+                                "type": "someType",
+                                "payload": "AAAABBBBCCCCDDDDEEEE1234567890ZZ"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "null"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKeyHeader": {
+                "type": "apiKey",
+                "name": "Ocp-Apim-Subscription-Key",
+                "in": "header"
+            },
+            "apiKeyQuery": {
+                "type": "apiKey",
+                "name": "subscription-key",
+                "in": "query"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKeyHeader": []
+        },
+        {
+            "apiKeyQuery": []
+        }
+    ]
+}
