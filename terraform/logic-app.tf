@@ -53,7 +53,7 @@ resource "azurerm_monitor_diagnostic_setting" "logic_svcplan" {
 resource "azurerm_storage_account" "logic" {
   for_each = { for each in local.logic_apps_instances : each.key => each }
 
-  name = format("sala%s", lower(random_string.location[each.value.location].result))
+  name = each.value.storage_name
 
   resource_group_name = azurerm_resource_group.logic[each.value.location].name
   location            = azurerm_resource_group.logic[each.value.location].location
