@@ -21,6 +21,19 @@ resource "azurerm_eventhub_namespace" "eh" {
 
   sku      = "Premium"
   capacity = 1
+
+  public_network_access_enabled = true
+
+  network_rulesets = [
+    {
+      default_action                 = "Allow"
+      ip_rule                        = []
+      public_network_access_enabled  = true
+      trusted_service_access_enabled = true
+      virtual_network_rule           = []
+    }
+  ]
+
 }
 
 resource "azurerm_private_endpoint" "eh" {
