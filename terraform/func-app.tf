@@ -208,6 +208,7 @@ resource "azurerm_linux_function_app" "func" {
 
   app_settings = {
     "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value.location].name, random_id.environment_id.hex, var.environment, each.value.location, azurerm_servicebus_namespace.sb[each.value.location].name),
+    "eventhub_connection_string"   = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/fa-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value.location].name, random_id.environment_id.hex, var.environment, each.value.location, azurerm_eventhub.eh_business_notifications[each.value.location].name),
     "ingest_connection_string"     = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.ingest_connection_string[each.value.location].name)
   }
 
