@@ -22,20 +22,20 @@ namespace web_app.Pages
         public async Task OnGet()
         {
             // If there is a Request-Id received from the upstream service, set the telemetry context accordingly.
-            var requestId = string.Empty;
-            if (HttpContext.Request.Headers.ContainsKey("Request-Id"))
-            {
-                requestId = HttpContext.Request.Headers["Request-Id"];
-            }
-
-            await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
-            {
-                var sender = client.CreateSender("from_website");
-                await sender.SendMessageAsync(new ServiceBusMessage($"Hello from the web application at {Region}!")
-                {
-                    CorrelationId = requestId
-                });
-            }
+            //var requestId = string.Empty;
+            //if (HttpContext.Request.Headers.ContainsKey("Request-Id"))
+            //{
+            //    requestId = HttpContext.Request.Headers["Request-Id"];
+            //}
+            //
+            //await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
+            //{
+            //    var sender = client.CreateSender("from_website");
+            //    await sender.SendMessageAsync(new ServiceBusMessage($"Hello from the web application at {Region}!")
+            //    {
+            //        CorrelationId = requestId
+            //    });
+            //}
         }
 
         public static string GetOperationId(string id)
