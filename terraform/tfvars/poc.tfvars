@@ -8,7 +8,7 @@ address_spaces = {
   //"ukwest"  = "10.1.0.0/16"
 }
 
-func_app_roles = ["pub", "sub", "bus"]
+func_app_roles = ["pub", "sub", "bus", "job"]
 
 logic_app_roles = ["pub", "sub"]
 

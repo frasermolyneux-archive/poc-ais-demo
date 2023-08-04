@@ -48,24 +48,10 @@ resource "azurerm_private_endpoint" "sb" {
   }
 }
 
-resource "azurerm_servicebus_queue" "random_queue" {
+resource "azurerm_servicebus_queue" "bus_in" {
   for_each = toset(var.locations)
 
-  name         = "random_queue"
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
-}
-
-resource "azurerm_servicebus_queue" "from_website" {
-  for_each = toset(var.locations)
-
-  name         = "from_website"
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
-}
-
-resource "azurerm_servicebus_queue" "files_in" {
-  for_each = toset(var.locations)
-
-  name         = "files-in"
+  name         = "bus_in"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
