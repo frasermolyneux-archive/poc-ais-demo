@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "eh" {
   tags = var.tags
 }
 
-resource "azurerm_eventhub_cluster" "eh" {
+resource "azurerm_eventhub_namespace" "eh" {
   for_each = toset(var.locations)
 
   name = format("eh-%s-%s-%s", random_id.environment_id.hex, var.environment, each.value)
@@ -17,13 +17,14 @@ resource "azurerm_eventhub_cluster" "eh" {
 
   tags = var.tags
 
-  sku_name = "Dedicated_1"
+  sku      = "Premium"
+  capacity = 1
 }
 
 resource "azurerm_private_endpoint" "eh" {
   for_each = toset(var.locations)
 
-  name = format("pe-%s-servicebus", azurerm_eventhub_cluster.eh[each.value].name)
+  name = format("pe-%s-servicebus", azurerm_eventhub_namespace.eh[each.value].name)
 
   resource_group_name = azurerm_resource_group.eh[each.value].name
   location            = azurerm_resource_group.eh[each.value].location
@@ -38,8 +39,8 @@ resource "azurerm_private_endpoint" "eh" {
   }
 
   private_service_connection {
-    name                           = format("pe-%s-namespace", azurerm_eventhub_cluster.eh[each.value].name)
-    private_connection_resource_id = azurerm_eventhub_cluster.eh[each.value].id
+    name                           = format("pe-%s-namespace", azurerm_eventhub_namespace.eh[each.value].name)
+    private_connection_resource_id = azurerm_eventhub_namespace.eh[each.value].id
     subresource_names              = ["namespace"]
     is_manual_connection           = false
   }
