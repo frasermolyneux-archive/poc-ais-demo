@@ -90,7 +90,7 @@ resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
 
   identifier = "applicationinsights"
 
-  api_name = azurerm_api_management_api.bus_api[each.key].name
+  api_name = azurerm_api_management_api.funcapp_api[each.key].name
 
   resource_group_name = azurerm_resource_group.apim.name
   api_management_name = azurerm_api_management.apim.name
