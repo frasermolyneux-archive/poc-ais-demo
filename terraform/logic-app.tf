@@ -208,7 +208,7 @@ resource "azurerm_logic_app_standard" "logic" {
     "WEBSITE_NODE_DEFAULT_VERSION"          = "~16"
     "WEBSITE_CONTENTOVERVNET"               = "1"
     "WEBSITE_RUN_FROM_PACKAGE"              = "1"
-    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/logic-%s-%s-%s-%s/)", azurerm_key_vault.kv[each.value.location].name, random_id.environment_id.hex, var.environment, each.value.location, azurerm_servicebus_namespace.sb[each.value.location].name)
+    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.logic_sb[each.key].name),
   }
 
   site_config {

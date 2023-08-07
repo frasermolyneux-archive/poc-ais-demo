@@ -12,7 +12,7 @@ resource "azurerm_servicebus_namespace_authorization_rule" "func" {
 resource "azurerm_key_vault_secret" "func_sb" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name         = format("%s-%s", azurerm_linux_function_app.func[each.key].name, azurerm_servicebus_namespace.sb[each.value.location].name)
+  name         = format("%s-%s", each.value.app_name, azurerm_servicebus_namespace.sb[each.value.location].name)
   value        = azurerm_servicebus_namespace_authorization_rule.func[each.key].primary_connection_string
   key_vault_id = azurerm_key_vault.kv[each.value.location].id
 
