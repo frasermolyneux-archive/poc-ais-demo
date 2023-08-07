@@ -2,11 +2,10 @@ locals {
   func_apps_instances_apim = flatten([
     for location in var.locations : [
       for func_app in var.function_apps : {
-        key          = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
-        storage_name = format("safn%s%s", func_app.role, lower(random_string.location[location].result))
-        role         = func_app.role
-        link_to_apim = func_app.link_to_apim
-        location     = location
+        key                 = format("fa-%s-%s-%s", func_app.role, var.environment, location)
+        app_name            = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
+        location            = location
+        apim_api_definition = func_app.apim_api_definition
       } if func_app.link_to_apim == true
     ]
   ])
@@ -14,7 +13,7 @@ locals {
 
 
 resource "azurerm_api_management_named_value" "funcapp_host_key_named_value" {
-  for_each = { for each in local.func_apps_instances : each.key => each }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
   name = azurerm_key_vault_secret.functionapp_host_key[each.key].name
 
@@ -35,7 +34,7 @@ resource "azurerm_api_management_named_value" "funcapp_host_key_named_value" {
 }
 
 resource "azurerm_api_management_backend" "funcapp_backend" {
-  for_each = { for each in local.func_apps_instances : each.key => each }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
   name = each.value.app_name
 
@@ -59,18 +58,18 @@ resource "azurerm_api_management_backend" "funcapp_backend" {
   }
 }
 
-resource "azurerm_api_management_api" "bus_api" {
+resource "azurerm_api_management_api" "funcapp_api" {
   for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
-  name = "servicebus-api"
+  name = each.value.app_name
 
   resource_group_name = azurerm_resource_group.apim.name
   api_management_name = azurerm_api_management.apim.name
 
   revision     = "1"
-  display_name = "Service Bus API"
-  description  = "API for Service Bus via Function App"
-  path         = "servicebus-api"
+  display_name = each.value.app_name
+  description  = each.value.app_name
+  path         = each.value.app_name
   protocols    = ["https"]
 
   subscription_required = true
@@ -82,12 +81,12 @@ resource "azurerm_api_management_api" "bus_api" {
 
   import {
     content_format = "openapi+json"
-    content_value  = file("../ServiceBusApi.openapi_json.json")
+    content_value  = file(format("../%s", each.value.apim_api_definition))
   }
 }
 
-resource "azurerm_api_management_api_diagnostic" "bus_api_diagnostic" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
+resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
+  for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
   identifier = "applicationinsights"
 

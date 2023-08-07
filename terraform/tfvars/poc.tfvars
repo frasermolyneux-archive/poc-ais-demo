@@ -16,8 +16,9 @@ function_apps = {
     role = "sub"
   },
   servicebus = {
-    role         = "bus",
-    link_to_apim = true
+    role                = "bus",
+    link_to_apim        = true,
+    apim_api_definition = "ServiceBusApi.openapi_json.json"
   },
   job-dispatch = {
     role = "job"
@@ -32,6 +33,7 @@ logic_apps = {
     role = "sub"
   }
 }
+
 
 subnets = {
   "uksouth" = {

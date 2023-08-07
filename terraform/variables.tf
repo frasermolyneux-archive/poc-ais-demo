@@ -18,8 +18,9 @@ variable "subnets" {}
 
 variable "function_apps" {
   type = map(object({
-    role         = string,
-    link_to_apim = optional(bool, false)
+    role                = string,
+    link_to_apim        = optional(bool, false)
+    apim_api_definition = optional(string, "")
   }))
 }
 
