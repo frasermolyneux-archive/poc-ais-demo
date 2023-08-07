@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-pub", "func-app-pu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-sub", "func-app-sub\func-app-sub.csproj", "{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "func-app-job", "func-app-job\func-app-job.csproj", "{04F6691F-0D00-4593-82BC-EF148058CB64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,5 +42,9 @@ Global
 		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F0F426C-EF35-4E8F-9695-A3FF9C3AB782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04F6691F-0D00-4593-82BC-EF148058CB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04F6691F-0D00-4593-82BC-EF148058CB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04F6691F-0D00-4593-82BC-EF148058CB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04F6691F-0D00-4593-82BC-EF148058CB64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
