@@ -1,3 +1,18 @@
+locals {
+  func_apps_instances_apim = flatten([
+    for location in var.locations : [
+      for func_app in var.function_apps : {
+        key          = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
+        storage_name = format("safn%s%s", func_app.role, lower(random_string.location[location].result))
+        role         = func_app.role
+        link_to_apim = func_app.link_to_apim
+        location     = location
+      } if func_app.link_to_apim == true
+    ]
+  ])
+}
+
+
 resource "azurerm_api_management_named_value" "funcapp_host_key_named_value" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
@@ -45,7 +60,7 @@ resource "azurerm_api_management_backend" "funcapp_backend" {
 }
 
 resource "azurerm_api_management_api" "bus_api" {
-  for_each = { for each in local.func_apps_instances : each.key => each if each.role == "bus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
   name = "servicebus-api"
 
@@ -72,7 +87,7 @@ resource "azurerm_api_management_api" "bus_api" {
 }
 
 resource "azurerm_api_management_api_diagnostic" "bus_api_diagnostic" {
-  for_each = { for each in local.func_apps_instances : each.key => each if each.role == "bus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   identifier = "applicationinsights"
 

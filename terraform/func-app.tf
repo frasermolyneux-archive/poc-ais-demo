@@ -1,10 +1,10 @@
 locals {
   func_apps_instances = flatten([
     for location in var.locations : [
-      for role in var.func_app_roles : {
-        key          = format("fa-%s-%s-%s-%s", role, random_id.environment_id.hex, var.environment, location)
-        storage_name = format("safn%s%s", role, lower(random_string.location[location].result))
-        role         = role
+      for func_app in var.function_apps : {
+        key          = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
+        storage_name = format("safn%s%s", func_app.role, lower(random_string.location[location].result))
+        role         = func_app.role
         location     = location
       }
     ]

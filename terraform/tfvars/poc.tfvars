@@ -8,9 +8,30 @@ address_spaces = {
   //"ukwest"  = "10.1.0.0/16"
 }
 
-func_app_roles = ["pub", "sub", "bus", "job"]
+function_apps = [
+  publisher = {
+    role = "pub"
+  },
+  subscriber = {
+    role = "sub"
+  },
+  servicebus = {
+    role = "bus",
+    link_to_apim = true
+  },
+  job-dispatch = {
+    role = "job"
+  }
+]
 
-logic_app_roles = ["pub", "sub"]
+logic_apps = [
+  publisher = {
+    role = "pub"
+  },
+  subscriber = {
+    role = "sub"
+  }
+]
 
 subnets = {
   "uksouth" = {

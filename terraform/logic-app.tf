@@ -1,10 +1,10 @@
 locals {
   logic_apps_instances = flatten([
     for location in var.locations : [
-      for role in var.logic_app_roles : {
-        key          = format("logic-%s-%s-%s-%s", role, random_id.environment_id.hex, var.environment, location)
-        storage_name = format("sala%s%s", role, lower(random_string.location[location].result))
-        role         = role
+      for logic_app in var.logic_apps : {
+        key          = format("logic-%s-%s-%s-%s", logic_app.role, random_id.environment_id.hex, var.environment, location)
+        storage_name = format("sala%s%s", logic_app.role, lower(random_string.location[location].result))
+        role         = logic_app.role
         location     = location
       }
     ]

@@ -16,12 +16,17 @@ variable "address_spaces" {}
 
 variable "subnets" {}
 
-variable "func_app_roles" {
-  default = ["sub1", "pub1"]
+variable "function_apps" {
+  type = map(object({
+    role         = string,
+    link_to_apim = optional(bool, false)
+  }))
 }
 
-variable "logic_app_roles" {
-  default = ["sub1", "pub1"]
+variable "logic_apps" {
+  type = map(object({
+    role = string
+  }))
 }
 
 variable "tags" {
