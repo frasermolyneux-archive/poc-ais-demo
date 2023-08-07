@@ -2,7 +2,8 @@ locals {
   func_apps_instances = flatten([
     for location in var.locations : [
       for func_app in var.function_apps : {
-        key          = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
+        key          = format("fa-%s-%s-%s", func_app.role, var.environment, location)
+        app_name     = format("fa-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
         storage_name = format("safn%s%s", func_app.role, lower(random_string.location[location].result))
         role         = func_app.role
         location     = location
@@ -174,7 +175,7 @@ resource "azurerm_private_endpoint" "func_sa_file_pe" {
 resource "azurerm_linux_function_app" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = each.key
+  name = each.value.app_name
 
   resource_group_name = azurerm_resource_group.func[each.value.location].name
   location            = azurerm_resource_group.func[each.value.location].location

@@ -2,7 +2,8 @@ locals {
   logic_apps_instances = flatten([
     for location in var.locations : [
       for logic_app in var.logic_apps : {
-        key          = format("logic-%s-%s-%s-%s", logic_app.role, random_id.environment_id.hex, var.environment, location)
+        key          = format("logic-%s-%s-%s", func_app.role, var.environment, location)
+        app_name     = format("logic-%s-%s-%s-%s", func_app.role, random_id.environment_id.hex, var.environment, location)
         storage_name = format("sala%s%s", logic_app.role, lower(random_string.location[location].result))
         role         = logic_app.role
         location     = location
@@ -184,7 +185,7 @@ resource "azurerm_storage_share" "logic" {
 resource "azurerm_logic_app_standard" "logic" {
   for_each = { for each in local.logic_apps_instances : each.key => each }
 
-  name = each.key
+  name = each.value.app_name
 
   version = "~4"
 

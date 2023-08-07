@@ -37,14 +37,14 @@ resource "azurerm_api_management_named_value" "funcapp_host_key_named_value" {
 resource "azurerm_api_management_backend" "funcapp_backend" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name = each.key
+  name = each.value.app_name
 
   resource_group_name = azurerm_resource_group.apim.name
   api_management_name = azurerm_api_management.apim.name
 
   protocol    = "http"
-  title       = each.key
-  description = each.key
+  title       = each.value.app_name
+  description = each.value.app_name
   url         = format("https://%s/api", azurerm_linux_function_app.func[each.key].default_hostname)
 
   tls {
