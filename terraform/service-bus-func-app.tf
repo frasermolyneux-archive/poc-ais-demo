@@ -1,7 +1,7 @@
 resource "azurerm_servicebus_namespace_authorization_rule" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name         = azurerm_linux_function_app.func[each.key].name
+  name         = each.value.app_name
   namespace_id = azurerm_servicebus_namespace.sb[each.value.location].id
 
   listen = true

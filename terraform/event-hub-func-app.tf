@@ -1,7 +1,7 @@
 resource "azurerm_eventhub_authorization_rule" "func" {
   for_each = { for each in local.func_apps_instances : each.key => each }
 
-  name           = azurerm_linux_function_app.func[each.key].name
+  name           = each.value.app_name
   namespace_name = azurerm_eventhub_namespace.eh[each.value.location].name
 
   eventhub_name       = azurerm_eventhub.eh_business_notifications[each.value.location].name

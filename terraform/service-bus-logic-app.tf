@@ -1,7 +1,7 @@
 resource "azurerm_servicebus_namespace_authorization_rule" "logic" {
   for_each = { for each in local.logic_apps_instances : each.key => each }
 
-  name         = azurerm_logic_app_standard.logic[each.key].name
+  name         = each.value.app_name
   namespace_id = azurerm_servicebus_namespace.sb[each.value.location].id
 
   listen = true
