@@ -69,6 +69,13 @@ resource "azurerm_servicebus_queue" "notifications_type_3" {
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
+resource "azurerm_servicebus_queue" "fraud_call_detections" {
+  for_each = toset(var.locations)
+
+  name         = "fraud_call_detections"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
 resource "azurerm_monitor_diagnostic_setting" "sb" {
   for_each = toset(var.locations)
 
