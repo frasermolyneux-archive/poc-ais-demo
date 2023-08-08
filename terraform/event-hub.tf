@@ -84,3 +84,15 @@ resource "azurerm_eventhub" "eh_business_notifications_batch" {
   partition_count   = 2
   message_retention = 1
 }
+
+resource "azurerm_eventhub" "eh_fraud_call_detection" {
+  for_each = toset(var.locations)
+
+  name = "fraud-call-detection"
+
+  namespace_name      = azurerm_eventhub_namespace.eh[each.value].name
+  resource_group_name = azurerm_resource_group.eh[each.value].name
+
+  partition_count   = 2
+  message_retention = 1
+}
