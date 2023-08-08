@@ -19,7 +19,7 @@ resource "azurerm_servicebus_namespace" "sb" {
   sku      = "Premium"
   capacity = 1
 
-  public_network_access_enabled = false
+  public_network_access_enabled = true // Required for demo
   minimum_tls_version           = "1.2"
 }
 
