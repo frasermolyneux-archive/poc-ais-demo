@@ -1,7 +1,4 @@
-﻿using Azure.Messaging.ServiceBus;
-
-
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace web_app.Pages
 {

@@ -5,7 +5,8 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>func_app_pub</RootNamespace>
+    <RootNamespace>Company.Functions.Pub</RootNamespace>
+    <AssemblyName>Company.Functions.Pub</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.14.1" />
