@@ -48,10 +48,24 @@ resource "azurerm_private_endpoint" "sb" {
   }
 }
 
-resource "azurerm_servicebus_queue" "bus_in" {
+resource "azurerm_servicebus_queue" "notifications_type_1" {
   for_each = toset(var.locations)
 
-  name         = "bus_in"
+  name         = "notifications_type_1"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
+resource "azurerm_servicebus_queue" "notifications_type_2" {
+  for_each = toset(var.locations)
+
+  name         = "notifications_type_2"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
+resource "azurerm_servicebus_queue" "notifications_type_3" {
+  for_each = toset(var.locations)
+
+  name         = "notifications_type_3"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 

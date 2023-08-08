@@ -72,3 +72,15 @@ resource "azurerm_eventhub" "eh_business_notifications" {
   partition_count   = 2
   message_retention = 1
 }
+
+resource "azurerm_eventhub" "eh_business_notifications_batch" {
+  for_each = toset(var.locations)
+
+  name = "business-notifications-batch"
+
+  namespace_name      = azurerm_eventhub_namespace.eh[each.value].name
+  resource_group_name = azurerm_resource_group.eh[each.value].name
+
+  partition_count   = 2
+  message_retention = 1
+}
