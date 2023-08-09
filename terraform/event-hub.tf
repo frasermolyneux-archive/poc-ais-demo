@@ -19,7 +19,7 @@ resource "azurerm_eventhub_namespace" "eh" {
 
   zone_redundant = true
 
-  sku      = "Premium"
+  sku      = "Standard"
   capacity = 1
 
   public_network_access_enabled = true

@@ -16,7 +16,7 @@ resource "azurerm_servicebus_namespace" "sb" {
   location            = azurerm_resource_group.sb[each.value].location
   tags                = var.tags
 
-  sku      = "Premium"
+  sku      = "Standard"
   capacity = 1
 
   public_network_access_enabled = true // Required for demo
