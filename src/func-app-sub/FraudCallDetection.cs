@@ -26,50 +26,56 @@ namespace func_app_sub
         {
             var logger = executionContext.GetLogger("FraudCallDetection");
 
-            foreach (string message in input)
+            var customDimensions = new Dictionary<string, object>()
             {
-                // The service bus client will automatically track as a dependency to application insights
-                await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
-                {
-                    FraudCallDetetectionData? messageData;
-                    try
-                    {
-                        messageData = JsonConvert.DeserializeObject<FraudCallDetetectionData>(message);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, $"Exception deserializing fraud call detection payload");
-                        continue;
-                    }
-
-                    if (messageData == null)
-                    {
-                        logger.LogError($"Failed to deserialize fraud call detection payload");
-                        continue;
-                    }
-
-                    var sender = client.CreateSender("fraud_call_detections");
-                    await sender.SendMessageAsync(new ServiceBusMessage(message));
-
-                    EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface");
-                    eventTelemetry.Properties.Add("InterfaceId", "ID_FraudCallDetection");
-                    eventTelemetry.Properties.Add("CallingIMSI", messageData.CallingIMSI);
-                    eventTelemetry.Properties.Add("CalledIMSI", messageData.CalledIMSI);
-                    eventTelemetry.Properties.Add("MSRN", messageData.MSRN);
-                    telemetryClient.TrackEvent(eventTelemetry);
-                };
-
-
-            }
-
-            MetricTelemetry metricTelemetry = new()
-            {
-                Name = "FraudCallDetectionBatch",
-                Sum = input.Count()
+                {"InterfaceId", "ID_FraudCallDetection" }
             };
 
-            metricTelemetry.Properties.Add("InterfaceId", "ID_FraudCallDetection");
-            telemetryClient.TrackMetric(metricTelemetry);
+            using (logger.BeginScope(customDimensions))
+            {
+                foreach (string message in input)
+                {
+                    // The service bus client will automatically track as a dependency to application insights
+                    await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
+                    {
+                        FraudCallDetetectionData? messageData;
+                        try
+                        {
+                            messageData = JsonConvert.DeserializeObject<FraudCallDetetectionData>(message);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogError(ex, $"Exception deserializing fraud call detection payload");
+                            continue;
+                        }
+
+                        if (messageData == null)
+                        {
+                            logger.LogError($"Failed to deserialize fraud call detection payload");
+                            continue;
+                        }
+
+                        var sender = client.CreateSender("fraud_call_detections");
+                        await sender.SendMessageAsync(new ServiceBusMessage(message));
+
+                        EventTelemetry eventTelemetry = new("FraudCallDetectionInInterface");
+                        eventTelemetry.Properties.Add("InterfaceId", "ID_FraudCallDetection");
+                        eventTelemetry.Properties.Add("CallingIMSI", messageData.CallingIMSI);
+                        eventTelemetry.Properties.Add("CalledIMSI", messageData.CalledIMSI);
+                        eventTelemetry.Properties.Add("MSRN", messageData.MSRN);
+                        telemetryClient.TrackEvent(eventTelemetry);
+                    };
+                }
+
+                MetricTelemetry metricTelemetry = new()
+                {
+                    Name = "FraudCallDetectionBatch",
+                    Sum = input.Count()
+                };
+
+                metricTelemetry.Properties.Add("InterfaceId", "ID_FraudCallDetection");
+                telemetryClient.TrackMetric(metricTelemetry);
+            }
         }
     }
 }
