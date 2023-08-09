@@ -7,6 +7,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace func_app_sub
 {
@@ -24,6 +25,8 @@ namespace func_app_sub
         [Function("FraudCallDetection")]
         public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string")] string[] input, FunctionContext executionContext)
         {
+            Activity.Current?.AddBaggage("InterfaceId", "ID_FraudCallDetection");
+
             var logger = executionContext.GetLogger("FraudCallDetection");
 
             var customDimensions = new Dictionary<string, object>()
