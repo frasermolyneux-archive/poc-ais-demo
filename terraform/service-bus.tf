@@ -17,7 +17,7 @@ resource "azurerm_servicebus_namespace" "sb" {
   tags                = var.tags
 
   sku      = "Standard"
-  capacity = 1
+  capacity = 0
 
   public_network_access_enabled = true // Required for demo
   minimum_tls_version           = "1.2"
