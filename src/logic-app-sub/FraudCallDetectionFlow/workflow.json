@@ -114,7 +114,13 @@
                         "serviceProviderId": "/serviceProviders/serviceBus"
                     }
                 },
-                "splitOn": "@triggerOutputs()?['body']"
+                "trackedProperties": {},
+                "splitOn": "@triggerOutputs()?['body']",
+                "splitOnConfiguration": {
+                    "correlation": {
+                        "clientTrackingId": "@triggerBody()['userProperties']['messageId']"
+                    }
+                }
             }
         },
         "parameters": {}
