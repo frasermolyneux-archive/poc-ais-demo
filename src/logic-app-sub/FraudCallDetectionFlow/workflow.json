@@ -118,7 +118,7 @@
                 "splitOn": "@triggerOutputs()?['body']",
                 "splitOnConfiguration": {
                     "correlation": {
-                        "clientTrackingId": "@triggerBody()['userProperties']['diagnostic-Id']"
+                        "clientTrackingId": "@triggerBody()['userProperties']['messageId']"
                     }
                 }
             }
