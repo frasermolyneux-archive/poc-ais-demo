@@ -5,7 +5,8 @@
       "samplingSettings": {
         "isEnabled": false
       }
-    }
+    },
+    "enableDependencyTracking": false
   },
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle.Workflows",
