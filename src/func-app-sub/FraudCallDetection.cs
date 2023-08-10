@@ -57,6 +57,9 @@ namespace func_app_sub
                     var messageCustomDimensions = new Dictionary<string, string>()
                     {
                         {"InterfaceId", "ID_FraudCallDetection"},
+                        // Generate a message ID, this will be the application identifier for the message through the platform providing correlation.
+                        // If the payload contained a usable message Id we could use that.
+                        {"MessageId", Guid.NewGuid().ToString()},
                         {"CallingIMSI", messageData.CallingIMSI},
                         {"CalledIMSI", messageData.CalledIMSI},
                         {"MSRN", messageData.MSRN}
@@ -65,7 +68,10 @@ namespace func_app_sub
                     telemetryClient.TrackTrace(new TraceTelemetry($"The message originated from {messageData.SwitchNum}").WithCustomProperties(messageCustomDimensions));
 
                     var sender = client.CreateSender("fraud_call_detections");
-                    await sender.SendMessageAsync(new ServiceBusMessage(message).WithCustomProperties(messageCustomDimensions));
+                    await sender.SendMessageAsync(new ServiceBusMessage(message)
+                    {
+                        MessageId = messageCustomDimensions["MessageId"]
+                    }.WithCustomProperties(messageCustomDimensions));
 
                     EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface").WithCustomProperties(messageCustomDimensions);
                     telemetryClient.TrackEvent(eventTelemetry);
