@@ -1,34 +1,32 @@
 using Azure.Messaging.ServiceBus;
 using Company.Abstractions.Models;
-using func_app_sub.Extensions;
-using Microsoft.ApplicationInsights;
+using Company.Functions.Sub.Extensions;
+using Company.Telemetry;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Diagnostics;
 
-namespace func_app_sub
+namespace Company.Functions.Sub
 {
     public class FraudCallDetection
     {
         private readonly IConfiguration configuration;
-        private readonly TelemetryClient telemetryClient;
+        private readonly IScopedLogger scopedLogger;
+        private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public FraudCallDetection(IConfiguration configuration, TelemetryConfiguration telemetryConfiguration)
+        public FraudCallDetection(IConfiguration configuration, IScopedLogger scopedLogger, IScopedTelemetryClient scopedTelemetryClient)
         {
             this.configuration = configuration;
-            this.telemetryClient = new TelemetryClient(telemetryConfiguration);
+            this.scopedLogger = scopedLogger;
+            this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
-        [Function("FraudCallDetection")]
-        public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string", IsBatched = false)] string input)
+        [FunctionName("FraudCallDetection")]
+        public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string")] string input)
         {
-            var customDimensions = new Dictionary<string, string>()
-            {
-                {"InterfaceId", "ID_FraudCallDetection"}
-            };
+            scopedLogger.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
 
             FraudCallDetetectionData? messageData;
             try
@@ -37,34 +35,30 @@ namespace func_app_sub
             }
             catch (Exception ex)
             {
-                telemetryClient.TrackException(new ExceptionTelemetry(ex).WithCustomProperties(customDimensions));
+                scopedLogger.LogError(ex, "Exception deserializing input");
                 throw;
             }
 
             if (messageData == null)
             {
                 var customException = new Exception("Message was null after deserialization attempt");
-                telemetryClient.TrackException(customException, customDimensions);
+                scopedLogger.LogError(customException, "Message was null after deserialization attempt");
                 throw customException;
             }
-
             var messageCustomDimensions = new Dictionary<string, string>()
                 {
-                    {"InterfaceId", "ID_FraudCallDetection"},
-                    // Generate a message ID, this will be the application identifier for the message through the platform providing correlation.
-                    // If the payload contained a usable message Id we could use that.
                     {"MessageId", Guid.NewGuid().ToString()},
                     {"CallingIMSI", messageData.CallingIMSI},
                     {"CalledIMSI", messageData.CalledIMSI},
                     {"MSRN", messageData.MSRN}
                 };
 
-            // The service bus client will automatically track as a dependency to application insights, add additional properties to the current activity.
-            Activity.Current?.WithCustomProperties(messageCustomDimensions);
+            scopedLogger.SetAdditionalProperties(messageCustomDimensions);
+            scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
             await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
             {
-                telemetryClient.TrackTrace(new TraceTelemetry($"The message originated from {messageData.SwitchNum}").WithCustomProperties(messageCustomDimensions));
+                scopedLogger.LogInformation($"The message originated from {messageData.SwitchNum}");
 
                 var sender = client.CreateSender("fraud_call_detections");
                 await sender.SendMessageAsync(new ServiceBusMessage(input)
@@ -73,7 +67,7 @@ namespace func_app_sub
                 }.WithCustomProperties(messageCustomDimensions));
 
                 EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface").WithCustomProperties(messageCustomDimensions);
-                telemetryClient.TrackEvent(eventTelemetry);
+                scopedTelemetryClient.TrackEvent(eventTelemetry);
             };
         }
     }

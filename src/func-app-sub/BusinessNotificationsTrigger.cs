@@ -1,10 +1,10 @@
 using Azure.Messaging.ServiceBus;
 using Company.Abstractions.Models;
-using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace func_app_sub
+namespace Company.Functions.Sub
 {
     public class BusinessNotificationsTrigger
     {
@@ -33,7 +33,7 @@ namespace func_app_sub
         // The function will deserialize the JSON into an object.
         // If deserialization fails, the function will log the error and move on to the next message.
         // If deserialization succeeds, the function will use the value of the notificationType property to determine the service bus where the message should be sent.
-        [Function("BusinessNotificationsTrigger")]
+        [FunctionName("BusinessNotificationsTrigger")]
         public async Task RunBusinessNotificationsTrigger([EventHubTrigger("business-notifications", Connection = "eventhub_connection_string")] string[] input)
         {
             foreach (string message in input)
@@ -79,7 +79,7 @@ namespace func_app_sub
         // The function will deserialize the JSON into an object.
         // If deserialization fails, the function will log the error and move on to the next message.
         // If deserialization succeeds, the function will use the value of the notificationType property to determine the service bus where the message should be sent.
-        [Function("BusinessNotificationsTriggerBatch")]
+        [FunctionName("BusinessNotificationsTriggerBatch")]
         public async Task RunBusinessNotificationsTriggerBatch([EventHubTrigger("business-notifications", Connection = "eventhub_connection_string")] string[] input)
         {
             foreach (string messageBatch in input)

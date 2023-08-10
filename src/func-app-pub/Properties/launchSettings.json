@@ -2,7 +2,7 @@
   "profiles": {
     "func_app_pub": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7270",
+      "commandLineArgs": "--port 7118",
       "launchBrowser": false
     }
   }
