@@ -1,15 +1,112 @@
 {
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "actions": {},
+        "actions": {
+            "Initialize_variable": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "MyVariable",
+                            "type": "boolean",
+                            "value": true
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "trackedProperties": {
+                    "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
+                    "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
+                    "InterfaceId": "ID_FraudCallDetection",
+                    "MSRN": "@triggerBody()['userProperties']['msrn']",
+                    "MessageId": "@triggerBody()['userProperties']['messageId']"
+                }
+            },
+            "Parse_JSON": {
+                "type": "ParseJson",
+                "inputs": {
+                    "content": "@triggerBody()?['contentData']",
+                    "schema": {
+                        "properties": {
+                            "CallPeriod": {
+                                "type": "integer"
+                            },
+                            "CalledCellID": {},
+                            "CalledIMSI": {
+                                "type": "string"
+                            },
+                            "CalledNum": {},
+                            "CalledNum2": {},
+                            "CallingCellID": {},
+                            "CallingIMSI": {
+                                "type": "string"
+                            },
+                            "CallingNum": {},
+                            "DateS": {
+                                "type": "string"
+                            },
+                            "EventEnqueuedUtcTime": {
+                                "type": "string"
+                            },
+                            "EventProcessedUtcTime": {
+                                "type": "string"
+                            },
+                            "FCIFlag": {},
+                            "FileNum": {
+                                "type": "string"
+                            },
+                            "IncomingTrunk": {},
+                            "MSRN": {
+                                "type": "string"
+                            },
+                            "OutgoingTrunk": {
+                                "type": "string"
+                            },
+                            "PartitionId": {
+                                "type": "integer"
+                            },
+                            "RecordType": {
+                                "type": "string"
+                            },
+                            "ServiceType": {
+                                "type": "string"
+                            },
+                            "SwitchNum": {
+                                "type": "string"
+                            },
+                            "SystemIdentity": {
+                                "type": "string"
+                            },
+                            "TimeS": {},
+                            "TimeType": {
+                                "type": "integer"
+                            },
+                            "Transfer": {
+                                "type": "integer"
+                            },
+                            "callrecTime": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {}
+            }
+        },
         "contentVersion": "1.0.0.0",
         "outputs": {},
         "triggers": {
             "When_messages_are_available_in_a_queue": {
+                "type": "ServiceProvider",
                 "inputs": {
                     "parameters": {
-                        "isSessionsEnabled": false,
-                        "queueName": "fraud_call_detections"
+                        "queueName": "fraud_call_detections",
+                        "isSessionsEnabled": false
                     },
                     "serviceProviderConfiguration": {
                         "connectionName": "serviceBus",
@@ -17,10 +114,10 @@
                         "serviceProviderId": "/serviceProviders/serviceBus"
                     }
                 },
-                "splitOn": "@triggerOutputs()?['body']",
-                "type": "ServiceProvider"
+                "splitOn": "@triggerOutputs()?['body']"
             }
-        }
+        },
+        "parameters": {}
     },
     "kind": "Stateful"
 }

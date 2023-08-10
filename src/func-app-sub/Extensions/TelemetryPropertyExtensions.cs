@@ -1,10 +1,21 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.ApplicationInsights.DataContracts;
+using System.Diagnostics;
 
 namespace func_app_sub.Extensions
 {
     internal static class TelemetryPropertyExtensions
     {
+        public static Activity WithCustomProperties(this Activity activity, IDictionary<string, string> additionalProperties)
+        {
+            foreach (var property in additionalProperties)
+            {
+                activity.SetBaggage(property.Key, property.Value);
+            }
+
+            return activity;
+        }
+
         public static ServiceBusMessage WithCustomProperties(this ServiceBusMessage message, IDictionary<string, string> additionalProperties)
         {
             foreach (var property in additionalProperties)
