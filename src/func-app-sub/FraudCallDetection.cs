@@ -43,6 +43,7 @@ namespace Company.Functions.Sub
                 logger.LogError(customException, "Message was null after deserialization attempt");
                 throw customException;
             }
+
             var messageCustomDimensions = new Dictionary<string, string>()
                 {
                     {"MessageId", Guid.NewGuid().ToString()},
