@@ -247,19 +247,19 @@ resource "azurerm_monitor_diagnostic_setting" "logic" {
     }
   }
 
-  enabled_log {
-    category = "WorkflowRuntime"
+  //enabled_log {
+  //  category = "WorkflowRuntime"
 
-    retention_policy {
-      enabled = false
-    }
-  }
+  //  retention_policy {
+  //    enabled = false
+  //  }
+  //}
 
-  enabled_log {
-    category = "FunctionAppLogs"
+  //enabled_log {
+  //  category = "FunctionAppLogs"
 
-    retention_policy {
-      enabled = false
-    }
-  }
+  //  retention_policy {
+  //    enabled = false
+  //  }
+  //}
 }
