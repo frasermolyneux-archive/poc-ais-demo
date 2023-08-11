@@ -5,6 +5,7 @@ using Company.Telemetry;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Company.Functions.Sub
@@ -12,20 +13,17 @@ namespace Company.Functions.Sub
     public class FraudCallDetection
     {
         private readonly IConfiguration configuration;
-        private readonly IScopedLogger scopedLogger;
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public FraudCallDetection(IConfiguration configuration, IScopedLogger scopedLogger, IScopedTelemetryClient scopedTelemetryClient)
+        public FraudCallDetection(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
         {
             this.configuration = configuration;
-            this.scopedLogger = scopedLogger;
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
         [FunctionName("FraudCallDetection")]
-        public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string")] string input)
+        public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string")] string input, ILogger logger)
         {
-            scopedLogger.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
 
             FraudCallDetetectionData? messageData;
@@ -35,14 +33,14 @@ namespace Company.Functions.Sub
             }
             catch (Exception ex)
             {
-                scopedLogger.LogError(ex, "Exception deserializing input");
+                logger.LogError(ex, "Exception deserializing input");
                 throw;
             }
 
             if (messageData == null)
             {
                 var customException = new Exception("Message was null after deserialization attempt");
-                scopedLogger.LogError(customException, "Message was null after deserialization attempt");
+                logger.LogError(customException, "Message was null after deserialization attempt");
                 throw customException;
             }
             var messageCustomDimensions = new Dictionary<string, string>()
@@ -53,12 +51,11 @@ namespace Company.Functions.Sub
                     {"MSRN", messageData.MSRN}
                 };
 
-            scopedLogger.SetAdditionalProperties(messageCustomDimensions);
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
             await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
             {
-                scopedLogger.LogInformation($"The message originated from {messageData.SwitchNum}");
+                logger.LogInformation($"The message originated from {messageData.SwitchNum}");
 
                 var sender = client.CreateSender("fraud_call_detections");
                 await sender.SendMessageAsync(new ServiceBusMessage(input)
@@ -66,9 +63,11 @@ namespace Company.Functions.Sub
                     MessageId = messageCustomDimensions["MessageId"]
                 }.WithCustomProperties(messageCustomDimensions));
 
-                EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface").WithCustomProperties(messageCustomDimensions);
+                EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface");
                 scopedTelemetryClient.TrackEvent(eventTelemetry);
             };
+
         }
     }
+}
 }

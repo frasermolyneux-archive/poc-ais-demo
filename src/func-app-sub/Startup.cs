@@ -10,7 +10,6 @@ namespace Company.Functions.Sub
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddScoped<IScopedLogger, ScopedLogger>();
             builder.Services.AddScoped<IScopedTelemetryClient, ScopedTelemetryClient>();
         }
     }
