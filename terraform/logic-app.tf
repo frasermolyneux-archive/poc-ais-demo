@@ -219,6 +219,10 @@ resource "azurerm_logic_app_standard" "logic" {
     "WORKFLOWS_RESOURCE_GROUP_NAME" = azurerm_resource_group.logic[each.value.location].name
     "WORKFLOWS_LOCATION_NAME"       = azurerm_resource_group.logic[each.value.location].location
     "WORKFLOWS_MANAGEMENT_BASE_URI" = "https://management.azure.com/"
+
+    // Logic App Connections
+    "WORKFLOWS_FUNCTIONAPP_RESOURCE_GROUP" = azurerm_resource_group.func[each.value.location].name
+    "WORKFLOWS_FUNCTIONAPP_NAME"           = azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name
   }
 
   site_config {
