@@ -223,6 +223,9 @@ resource "azurerm_logic_app_standard" "logic" {
     // Logic App Connections
     "WORKFLOWS_FUNCTIONAPP_RESOURCE_GROUP" = azurerm_resource_group.func[each.value.location].name
     "WORKFLOWS_FUNCTIONAPP_NAME"           = azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name
+
+    // FunctionAppTriggerUrls
+    "function_app_trigger_fraudcalldetectionfunc" = format("https://%s.azurewebsites.net/api/fraudcalldetectionfunc", azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name)
   }
 
   site_config {
