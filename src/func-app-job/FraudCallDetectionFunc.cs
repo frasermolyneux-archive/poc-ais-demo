@@ -24,7 +24,7 @@ namespace Company.Functions.Job
         {
             var messageId = req.Headers["x-ms-client-tracking-id"];
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
-            scopedTelemetryClient.SetAdditionalProperty("messageId", messageId);
+            scopedTelemetryClient.SetAdditionalProperty("MessageId", messageId);
 
             string requestBody = string.Empty;
             using (StreamReader streamReader = new(req.Body))
