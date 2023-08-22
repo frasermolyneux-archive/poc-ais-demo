@@ -96,6 +96,45 @@
                     }
                 },
                 "runAfter": {}
+            },
+            "Call_an_Azure_function": {
+                "type": "Function",
+                "inputs": {
+                    "method": "POST",
+                    "body": "@body('Parse_JSON')",
+                    "function": {
+                        "connectionName": "azureFunctionOperation"
+                    }
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "SUCCEEDED"
+                    ]
+                }
+            },
+            "HTTP": {
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://www.google.com",
+                    "method": "GET"
+                },
+                "runAfter": {
+                    "Call_an_Azure_function": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "trackedProperties": {
+                    "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
+                    "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
+                    "InterfaceId": "ID_FraudCallDetection",
+                    "MSRN": "@triggerBody()['userProperties']['msrn']",
+                    "MessageId": "@triggerBody()['userProperties']['messageId']"
+                }
             }
         },
         "contentVersion": "1.0.0.0",
@@ -114,7 +153,6 @@
                         "serviceProviderId": "/serviceProviders/serviceBus"
                     }
                 },
-                "trackedProperties": {},
                 "splitOn": "@triggerOutputs()?['body']",
                 "splitOnConfiguration": {
                     "correlation": {
@@ -125,5 +163,25 @@
         },
         "parameters": {}
     },
-    "kind": "Stateful"
+    "connectionReferences": {
+        "serviceBus": {
+            "connection": {
+                "id": "/serviceProviders/serviceBus/connections/serviceBus"
+            },
+            "connectionName": "servicebus-connection",
+            "api": {
+                "id": "/serviceProviders/serviceBus"
+            }
+        },
+        "azureFunctionOperation": {
+            "connection": {
+                "id": "/connectionProviders/azureFunctionOperation/connections/azureFunctionOperation"
+            },
+            "connectionName": "azureFunctionOperation",
+            "api": {
+                "id": "/connectionProviders/azureFunctionOperation"
+            }
+        }
+    },
+    "parameters": {}
 }

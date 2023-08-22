@@ -1,4 +1,18 @@
 {
+  "functionConnections": {
+    "azureFunctionOperation": {
+      "authentication": {
+        "name": "Code",
+        "type": "QueryString",
+        "value": "@appsetting('azureFunctionOperation_functionAppKey')"
+      },
+      "displayName": "faJob",
+      "function": {
+        "id": "/subscriptions/ecc74148-1a84-4ec7-99bb-d26aba7f9c0d/resourceGroups/rg-func-44d8ac4eb961-poc-uksouth/providers/Microsoft.Web/sites/fa-job-44d8ac4eb961-poc-uksouth/functions/FraudCallDetectionFunc"
+      },
+      "triggerUrl": "https://fa-job-44d8ac4eb961-poc-uksouth.azurewebsites.net/api/fraudcalldetectionfunc"
+    }
+  },
   "managedApiConnections": {},
   "serviceProviderConnections": {
     "serviceBus": {
