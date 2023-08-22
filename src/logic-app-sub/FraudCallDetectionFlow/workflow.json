@@ -1,9 +1,67 @@
 {
+    "connectionReferences": {
+        "functionAppJob": {
+            "api": {
+                "id": "/connectionProviders/azureFunctionOperation"
+            },
+            "connection": {
+                "id": "/connectionProviders/azureFunctionOperation/connections/functionAppJob"
+            },
+            "connectionName": "functionAppJob"
+        },
+        "serviceBus": {
+            "api": {
+                "id": "/serviceProviders/serviceBus"
+            },
+            "connection": {
+                "id": "/serviceProviders/serviceBus/connections/serviceBus"
+            },
+            "connectionName": "servicebus-connection"
+        }
+    },
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
+            "Call_an_Azure_function": {
+                "inputs": {
+                    "body": "@body('Parse_JSON')",
+                    "function": {
+                        "connectionName": "functionAppJob"
+                    },
+                    "method": "POST"
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "type": "Function"
+            },
+            "HTTP": {
+                "inputs": {
+                    "method": "GET",
+                    "uri": "https://www.google.com"
+                },
+                "runAfter": {
+                    "Call_an_Azure_function": [
+                        "SUCCEEDED"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "trackedProperties": {
+                    "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
+                    "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
+                    "InterfaceId": "ID_FraudCallDetection",
+                    "MSRN": "@triggerBody()['userProperties']['msrn']",
+                    "MessageId": "@triggerBody()['userProperties']['messageId']"
+                },
+                "type": "Http"
+            },
             "Initialize_variable": {
-                "type": "InitializeVariable",
                 "inputs": {
                     "variables": [
                         {
@@ -24,10 +82,10 @@
                     "InterfaceId": "ID_FraudCallDetection",
                     "MSRN": "@triggerBody()['userProperties']['msrn']",
                     "MessageId": "@triggerBody()['userProperties']['messageId']"
-                }
+                },
+                "type": "InitializeVariable"
             },
             "Parse_JSON": {
-                "type": "ParseJson",
                 "inputs": {
                     "content": "@triggerBody()?['contentData']",
                     "schema": {
@@ -95,57 +153,19 @@
                         "type": "object"
                     }
                 },
-                "runAfter": {}
-            },
-            "Call_an_Azure_function": {
-                "type": "Function",
-                "inputs": {
-                    "method": "POST",
-                    "body": "@body('Parse_JSON')",
-                    "function": {
-                        "connectionName": "functionAppJob"
-                    }
-                },
-                "runAfter": {
-                    "Initialize_variable": [
-                        "SUCCEEDED"
-                    ]
-                }
-            },
-            "HTTP": {
-                "type": "Http",
-                "inputs": {
-                    "uri": "https://www.google.com",
-                    "method": "GET"
-                },
-                "runAfter": {
-                    "Call_an_Azure_function": [
-                        "SUCCEEDED"
-                    ]
-                },
-                "runtimeConfiguration": {
-                    "contentTransfer": {
-                        "transferMode": "Chunked"
-                    }
-                },
-                "trackedProperties": {
-                    "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
-                    "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
-                    "InterfaceId": "ID_FraudCallDetection",
-                    "MSRN": "@triggerBody()['userProperties']['msrn']",
-                    "MessageId": "@triggerBody()['userProperties']['messageId']"
-                }
+                "runAfter": {},
+                "type": "ParseJson"
             }
         },
         "contentVersion": "1.0.0.0",
         "outputs": {},
+        "parameters": {},
         "triggers": {
             "When_messages_are_available_in_a_queue": {
-                "type": "ServiceProvider",
                 "inputs": {
                     "parameters": {
-                        "queueName": "fraud_call_detections",
-                        "isSessionsEnabled": false
+                        "isSessionsEnabled": false,
+                        "queueName": "fraud_call_detections"
                     },
                     "serviceProviderConfiguration": {
                         "connectionName": "serviceBus",
@@ -158,28 +178,8 @@
                     "correlation": {
                         "clientTrackingId": "@triggerBody()['userProperties']['messageId']"
                     }
-                }
-            }
-        },
-        "parameters": {}
-    },
-    "connectionReferences": {
-        "serviceBus": {
-            "connection": {
-                "id": "/serviceProviders/serviceBus/connections/serviceBus"
-            },
-            "connectionName": "servicebus-connection",
-            "api": {
-                "id": "/serviceProviders/serviceBus"
-            }
-        },
-        "azureFunctionOperation": {
-            "connection": {
-                "id": "/connectionProviders/azureFunctionOperation/connections/azureFunctionOperation"
-            },
-            "connectionName": "azureFunctionOperation",
-            "api": {
-                "id": "/connectionProviders/azureFunctionOperation"
+                },
+                "type": "ServiceProvider"
             }
         }
     },
