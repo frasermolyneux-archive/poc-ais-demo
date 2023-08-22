@@ -211,7 +211,7 @@ resource "azurerm_logic_app_standard" "logic" {
 
     // AIS connections
     "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.logic_sb[each.key].name),
-    "function_app_key_job"         = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.functionapp_host_key[format("fa-job-%s-%s", each.value.environment, each.value.location)].name),
+    "function_app_key_job"         = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.functionapp_host_key[format("fa-job-%s-%s", var.environment, each.value.location)].name),
 
     // Logic App Workflow related app settings for connections.json
     "WORKFLOWS_TENANT_ID"           = data.azurerm_client_config.current.tenant_id
