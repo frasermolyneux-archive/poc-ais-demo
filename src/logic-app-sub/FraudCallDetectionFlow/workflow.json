@@ -1,24 +1,4 @@
 {
-    "connectionReferences": {
-        "functionAppJob": {
-            "api": {
-                "id": "/connectionProviders/azureFunctionOperation"
-            },
-            "connection": {
-                "id": "/connectionProviders/azureFunctionOperation/connections/functionAppJob"
-            },
-            "connectionName": "functionAppJob"
-        },
-        "serviceBus": {
-            "api": {
-                "id": "/serviceProviders/serviceBus"
-            },
-            "connection": {
-                "id": "/serviceProviders/serviceBus/connections/serviceBus"
-            },
-            "connectionName": "servicebus-connection"
-        }
-    },
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
@@ -34,6 +14,13 @@
                     "Initialize_variable": [
                         "SUCCEEDED"
                     ]
+                },
+                "trackedProperties": {
+                    "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
+                    "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
+                    "InterfaceId": "ID_FraudCallDetection",
+                    "MSRN": "@triggerBody()['userProperties']['msrn']",
+                    "MessageId": "@triggerBody()['userProperties']['messageId']"
                 },
                 "type": "Function"
             },
@@ -183,5 +170,5 @@
             }
         }
     },
-    "parameters": {}
+    "kind": "Stateful"
 }
