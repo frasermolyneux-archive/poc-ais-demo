@@ -103,7 +103,7 @@
                     "method": "POST",
                     "body": "@body('Parse_JSON')",
                     "function": {
-                        "connectionName": "azureFunctionOperation"
+                        "connectionName": "functionAppJob"
                     }
                 },
                 "runAfter": {

@@ -208,7 +208,17 @@ resource "azurerm_logic_app_standard" "logic" {
     "WEBSITE_NODE_DEFAULT_VERSION"          = "~16"
     "WEBSITE_CONTENTOVERVNET"               = "1"
     "WEBSITE_RUN_FROM_PACKAGE"              = "1"
-    "servicebus_connection_string"          = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.logic_sb[each.key].name),
+
+    // AIS connections
+    "servicebus_connection_string" = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.logic_sb[each.key].name),
+    "function_app_key_job"         = format("@Microsoft.KeyVault(SecretUri=https://%s.vault.azure.net/secrets/%s/)", azurerm_key_vault.kv[each.value.location].name, azurerm_key_vault_secret.functionapp_host_key[format("fa-job-%s-%s", each.value.environment, each.value.location)].name),
+
+    // Logic App Workflow related app settings for connections.json
+    "WORKFLOWS_TENANT_ID"           = data.azurerm_client_config.current.tenant_id
+    "WORKFLOWS_SUBSCRIPTION_ID"     = data.azurerm_client_config.current.subscription_id
+    "WORKFLOWS_RESOURCE_GROUP_NAME" = azurerm_resource_group.logic[each.value.location].name
+    "WORKFLOWS_LOCATION_NAME"       = azurerm_resource_group.logic[each.value.location].location
+    "WORKFLOWS_MANAGEMENT_BASE_URI" = "https://management.azure.com/"
   }
 
   site_config {
