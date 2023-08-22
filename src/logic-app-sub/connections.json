@@ -8,9 +8,9 @@
       },
       "displayName": "functionAppJob",
       "function": {
-        "id": "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_FUNCTIONAPP_RESOURCE_GROUP')}/providers/Microsoft.Web/sites/${@appsetting('WORKFLOWS_FUNCTIONAPP_NAME')}/functions/FraudCallDetectionFunc"
+        "id": "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_FUNCTIONAPP_RESOURCE_GROUP')}/providers/Microsoft.Web/sites/@{appsetting('WORKFLOWS_FUNCTIONAPP_NAME')}/functions/FraudCallDetectionFunc"
       },
-      "triggerUrl": "https://${@appsetting('WORKFLOWS_FUNCTIONAPP_NAME')}.azurewebsites.net/api/fraudcalldetectionfunc"
+      "triggerUrl": "https://@{appsetting('WORKFLOWS_FUNCTIONAPP_NAME')}.azurewebsites.net/api/fraudcalldetectionfunc"
     }
   },
   "managedApiConnections": {},
