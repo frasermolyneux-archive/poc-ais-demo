@@ -20,12 +20,12 @@ namespace Company.Functions.Bus
         [return: ServiceBus("vehicle_toll_booth", Connection = "servicebus_connection_string")]
         public string RunPostVehicleTollMessage([HttpTrigger] dynamic input, ILogger logger)
         {
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
 
             VehicleTollBoothData? messageData;
             try
             {
-                messageData = JsonConvert.DeserializeObject<FraudCallDetetectionData>(input);
+                messageData = JsonConvert.DeserializeObject<VehicleTollBoothData>(input);
             }
             catch (Exception ex)
             {
