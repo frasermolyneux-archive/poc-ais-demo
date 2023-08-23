@@ -85,6 +85,30 @@ resource "azurerm_api_management_api" "funcapp_api" {
   }
 }
 
+resource "azurerm_api_management_api_policy" "funcapp_backend" {
+  for_each = { for each in local.func_apps_instances_apim : each.key => each }
+
+  api_name            = azurerm_api_management_api.funcapp_api[each.key].name
+  resource_group_name = azurerm_resource_group.apim.name
+  api_management_name = azurerm_api_management.apim.name
+
+  xml_content = <<XML
+<policies>
+  <inbound>
+      <base/>
+      <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
+  </inbound>
+  <backend>
+      <forward-request />
+  </backend>
+  <outbound>
+      <base/>
+  </outbound>
+  <on-error />
+</policies>
+XML
+}
+
 resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
   for_each = { for each in local.func_apps_instances_apim : each.key => each }
 
