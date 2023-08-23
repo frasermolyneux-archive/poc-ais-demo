@@ -25,11 +25,11 @@ namespace Company.Functions.Bus
             VehicleTollBoothData? messageData;
             try
             {
-                messageData = JsonConvert.DeserializeObject<VehicleTollBoothData>(input);
+                messageData = JsonConvert.DeserializeObject<VehicleTollBoothData>(input.Text);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Exception deserializing input");
+                logger.LogError(ex, $"Exception deserializing input: {input}");
                 throw;
             }
 
@@ -54,7 +54,7 @@ namespace Company.Functions.Bus
             EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothInInterface");
             scopedTelemetryClient.TrackEvent(eventTelemetry);
 
-            return input.Text;
+            return JsonConvert.SerializeObject(messageData);
         }
     }
 }
