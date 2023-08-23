@@ -48,31 +48,17 @@ resource "azurerm_servicebus_namespace" "sb" {
 //  }
 //}
 
-resource "azurerm_servicebus_queue" "notifications_type_1" {
-  for_each = toset(var.locations)
-
-  name         = "notifications_type_1"
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
-}
-
-resource "azurerm_servicebus_queue" "notifications_type_2" {
-  for_each = toset(var.locations)
-
-  name         = "notifications_type_2"
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
-}
-
-resource "azurerm_servicebus_queue" "notifications_type_3" {
-  for_each = toset(var.locations)
-
-  name         = "notifications_type_3"
-  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
-}
-
 resource "azurerm_servicebus_queue" "fraud_call_detections" {
   for_each = toset(var.locations)
 
   name         = "fraud_call_detections"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
+resource "azurerm_servicebus_queue" "vehicle_toll_booth" {
+  for_each = toset(var.locations)
+
+  name         = "vehicle_toll_booth"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
