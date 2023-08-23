@@ -1,8 +1,11 @@
-﻿namespace Company.Abstractions.Models
+﻿using Newtonsoft.Json;
+
+namespace Company.Abstractions.Models
 {
     public class VehicleTollBoothData
     {
         public DateTime EntryTime { get; set; }
+        [JsonProperty("CarModel")]
         public CarModelData CarModel { get; set; }
         public string State { get; set; }
         public int TollAmount { get; set; }
