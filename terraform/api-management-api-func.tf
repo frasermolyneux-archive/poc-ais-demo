@@ -103,8 +103,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
                 new JProperty("EventName", context.Operation.Name),
                 new JProperty("AdditionalProperties", new Dictionary<string, string>(){
                   {"EventTime", DateTime.UtcNow.ToString()},
-                  {"ServiceName", context.Deployment.ServiceName},
-                  {"RequestId", context.RequestId}
+                  {"ServiceName", context.Deployment.ServiceName}
                 })
             ).ToString();
         }
