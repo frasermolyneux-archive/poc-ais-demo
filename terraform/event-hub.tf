@@ -61,6 +61,32 @@ resource "azurerm_private_endpoint" "eh" {
   }
 }
 
+resource "azurerm_eventhub" "appinsights_custom_events" {
+  for_each = toset(var.locations)
+
+  name = "appinsights-custom-events"
+
+  namespace_name      = azurerm_eventhub_namespace.eh[each.value].name
+  resource_group_name = azurerm_resource_group.eh[each.value].name
+
+  partition_count   = 2
+  message_retention = 1
+}
+
+resource "azurerm_eventhub_authorization_rule" "appinsights_custom_events_apim" {
+  for_each = toset(var.locations)
+
+  name = "apim-eh-logger"
+
+  namespace_name      = azurerm_eventhub_namespace.eh[each.value].name
+  eventhub_name       = azurerm_eventhub.appinsights_custom_events[each.value].name
+  resource_group_name = azurerm_resource_group.eh[each.value].name
+
+  listen = false
+  send   = true
+  manage = false
+}
+
 resource "azurerm_eventhub" "eh_business_notifications" {
   for_each = toset(var.locations)
 

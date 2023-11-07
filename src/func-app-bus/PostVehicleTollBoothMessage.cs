@@ -9,11 +9,11 @@ using Newtonsoft.Json;
 
 namespace Company.Functions.Bus
 {
-    public class PostMessage
+    public class PostVehicleTollBoothMessage
     {
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public PostMessage(IScopedTelemetryClient scopedTelemetryClient)
+        public PostVehicleTollBoothMessage(IScopedTelemetryClient scopedTelemetryClient)
         {
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
@@ -25,10 +25,10 @@ namespace Company.Functions.Bus
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
 
             var messageCustomDimensions = new Dictionary<string, string>()
-                {
-                    {"TollId", messageData.TollId.ToString()},
-                    {"LicensePlate", messageData.LicensePlate},
-                    {"Tag", messageData.Tag.ToString()}
+            {
+                {"TollId", messageData.TollId.ToString()},
+                {"LicensePlate", messageData.LicensePlate},
+                {"Tag", messageData.Tag.ToString()}
             };
 
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
