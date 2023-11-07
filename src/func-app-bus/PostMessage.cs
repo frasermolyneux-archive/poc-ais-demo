@@ -1,6 +1,8 @@
 using Company.Abstractions.Models;
 using Company.Telemetry;
 using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,27 +20,9 @@ namespace Company.Functions.Bus
 
         [FunctionName("PostVehicleTollBoothMessage")]
         [return: ServiceBus("vehicle_toll_booth", Connection = "servicebus_connection_string")]
-        public string RunPostVehicleTollMessage([HttpTrigger] dynamic input, ILogger logger)
+        public string RunPostVehicleTollMessage([HttpTrigger] HttpRequest req, [FromBody] VehicleTollBoothData messageData, ILogger logger)
         {
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
-
-            VehicleTollBoothData? messageData;
-            try
-            {
-                messageData = JsonConvert.DeserializeObject<VehicleTollBoothData>(input.Text);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, $"Exception deserializing input: {input}");
-                throw;
-            }
-
-            if (messageData == null)
-            {
-                var customException = new Exception("Message was null after deserialization attempt");
-                logger.LogError(customException, "Message was null after deserialization attempt");
-                throw customException;
-            }
 
             var messageCustomDimensions = new Dictionary<string, string>()
                 {
