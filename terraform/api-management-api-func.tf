@@ -99,12 +99,23 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
       <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
-            return new JObject(
-                new JProperty("InterfaceId", "ID_VehicleTollBooth"),
-                new JProperty("EventName", context.Operation.Name),
-                new JProperty("EventTime", DateTime.UtcNow.ToString()), 
-                new JProperty("ServiceName", context.Deployment.ServiceName)
-            ).ToString();
+            dynamic requestData = JsonConvert.DeserializeObject(context.Request.Body.As<string>());
+
+            var customDimensions = new Dictionary<string, string>() {
+                {"InterfaceId", "ID_VehicleTollBooth"},
+                {"TollId", requestData?.TollId},
+                {"LicensePlate", requestData?.LicensePlate}
+            };
+
+            var customEvent = new {
+                OperationId = context.Operation.Id,
+                ServiceId = context.Deployment.ServiceId,
+                ServiceName = context.Deployment.ServiceName,
+                EventName = context.Operation.Name,
+                CustomDimensions = customDimensions
+            };
+
+            return JsonConvert.SerializeObject(customEvent);
         }
       </log-to-eventhub>
   </inbound>

@@ -38,10 +38,10 @@ namespace Company.Functions.Sub
                     continue;
                 }
 
-                TelemetryClient.TrackEvent(messageData.EventName, new Dictionary<string, string>()
-                {
-                    {"InterfaceId", messageData.InterfaceId}
-                });
+                TelemetryClient.Context.Operation.Id = messageData.OperationId;
+                TelemetryClient.Context.Operation.Name = messageData.EventName;
+
+                TelemetryClient.TrackEvent(messageData.EventName, messageData.CustomDimensions);
             }
         }
     }
