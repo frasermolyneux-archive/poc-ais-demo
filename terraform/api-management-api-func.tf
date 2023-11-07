@@ -100,11 +100,10 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
       <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
             return new JObject(
+                new JProperty("InterfaceId", "ID_VehicleTollBooth"),
                 new JProperty("EventName", context.Operation.Name),
-                new JProperty("AdditionalProperties", new Dictionary<string, string>(){
-                  {"EventTime", DateTime.UtcNow.ToString()},
-                  {"ServiceName", context.Deployment.ServiceName}
-                })
+                new JProperty("EventTime", DateTime.UtcNow.ToString()), 
+                new JProperty("ServiceName", context.Deployment.ServiceName)
             ).ToString();
         }
       </log-to-eventhub>

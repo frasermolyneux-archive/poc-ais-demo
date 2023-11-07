@@ -38,7 +38,10 @@ namespace Company.Functions.Sub
                     continue;
                 }
 
-                TelemetryClient.TrackEvent(messageData.EventName, messageData?.AdditionalProperties);
+                TelemetryClient.TrackEvent(messageData.EventName, new Dictionary<string, string>()
+                {
+                    {"InterfaceId", messageData.InterfaceId}
+                });
             }
         }
     }

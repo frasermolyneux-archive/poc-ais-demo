@@ -7,7 +7,7 @@ namespace Company.Abstractions.Models
 {
     public class ApimCustomEvent
     {
+        public string InterfaceId { get; set; }
         public string EventName { get; set; }
-        public Dictionary<string, string> AdditionalProperties { get; set; }
     }
 }
