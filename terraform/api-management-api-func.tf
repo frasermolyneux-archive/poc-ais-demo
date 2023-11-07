@@ -97,6 +97,18 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
   <inbound>
       <base/>
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
+      <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.key].name}">
+        @{
+            return new JObject(
+                new JProperty("EventName", context.Operation.Name),
+                new JProperty("AdditionalProperties", new Dictionary<string, string>(){
+                  {"EventTime", DateTime.UtcNow.ToString()},
+                  {"ServiceName", context.Deployment.ServiceName},
+                  {"RequestId", context.RequestId}
+                })
+            ).ToString();
+        }
+      </log-to-eventhub>
   </inbound>
   <backend>
       <forward-request />

@@ -2,18 +2,36 @@
 
 namespace Company.Abstractions.Models
 {
-    public class VehicleTollBoothData
+    public partial class VehicleTollBoothData
     {
-        public DateTime EntryTime { get; set; }
+        [JsonProperty("EntryTime")]
+        public DateTimeOffset EntryTime { get; set; }
+
         [JsonProperty("CarModel")]
-        public CarModelData CarModel { get; set; }
+        public CarModel CarModel { get; set; }
+
+        [JsonProperty("State")]
         public string State { get; set; }
-        public int TollAmount { get; set; }
-        public int Tag { get; set; }
-        public int TollId { get; set; }
+
+        [JsonProperty("TollAmount")]
+        public long TollAmount { get; set; }
+
+        [JsonProperty("Tag")]
+        public long Tag { get; set; }
+
+        [JsonProperty("TollId")]
+        public long TollId { get; set; }
+
+        [JsonProperty("LicensePlate")]
         public string LicensePlate { get; set; }
-        public DateTime EventProcessedUtcTime { get; set; }
-        public int PartitionId { get; set; }
-        public DateTime EventEnqueuedUtcTime { get; set; }
+
+        [JsonProperty("EventProcessedUtcTime")]
+        public DateTimeOffset EventProcessedUtcTime { get; set; }
+
+        [JsonProperty("PartitionId")]
+        public long PartitionId { get; set; }
+
+        [JsonProperty("EventEnqueuedUtcTime")]
+        public DateTimeOffset EventEnqueuedUtcTime { get; set; }
     }
 }
