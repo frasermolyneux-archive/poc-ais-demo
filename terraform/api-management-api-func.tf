@@ -97,7 +97,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
   <inbound>
       <base/>
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
-      <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.key].name}">
+      <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
             return new JObject(
                 new JProperty("EventName", context.Operation.Name),
