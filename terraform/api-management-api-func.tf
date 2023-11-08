@@ -97,6 +97,10 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
   <inbound>
       <base/>
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
+      <set-variable name="messageId" value="@(Guid.NewGuid().ToString())" />
+      <set-header name="MessageId" exists-action="override">
+        <value>@((string)context.Variables["messageId"])</value>
+      </set-header>
       <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
 	          var requestBody = (JObject)context.Request.Body.As<JObject>(preserveContent: true);
@@ -105,6 +109,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
 		
             var customDimensions = new Dictionary<string, string>() {
                 {"InterfaceId", "ID_VehicleTollBooth"},
+                {"MessageId", context.Variables["messageId"].ToString()},
                 {"TollId", tollId},
                 {"LicensePlate", licensePlate}
             };

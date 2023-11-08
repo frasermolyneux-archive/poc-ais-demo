@@ -31,6 +31,8 @@ namespace Company.Functions.Bus
 
             logger.LogInformation($"Received vehicle toll booth event: {requestBody}");
 
+            var messageId = req.Headers["MessageId"].FirstOrDefault() ?? Guid.NewGuid().ToString();
+
             VehicleTollBoothData? messageData;
             try
             {
@@ -52,6 +54,7 @@ namespace Company.Functions.Bus
 
             var messageCustomDimensions = new Dictionary<string, string>()
             {
+                {"MessageId", messageId},
                 {"TollId", messageData.TollId.ToString()},
                 {"LicensePlate", messageData.LicensePlate},
                 {"Tag", messageData.Tag.ToString()}

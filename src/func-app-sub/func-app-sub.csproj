@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -12,12 +12,13 @@
 
   <ItemGroup>
 	  <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="5.4.0" />
-	  <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
-	  <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.16.0" />
+	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventHubs" Version="6.0.1" />
+	  <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
+	  <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.16.2" />
 	  <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.35" />
-	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	  <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.13.3" />
   </ItemGroup>
 
   <ItemGroup>
