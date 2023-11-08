@@ -29,6 +29,8 @@ namespace Company.Functions.Bus
                 requestBody = await streamReader.ReadToEndAsync();
             }
 
+            logger.LogInformation($"Received vehicle toll booth event: {requestBody}");
+
             VehicleTollBoothData? messageData;
             try
             {

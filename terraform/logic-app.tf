@@ -62,8 +62,8 @@ resource "azurerm_storage_account" "logic" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  min_tls_version = "TLS1_2"
-
+  min_tls_version                 = "TLS1_2"
+  allow_nested_items_to_be_public = false
 
   // Public network access must be enabled for the demo as the GitHub Actions runner is not network connected.
   public_network_access_enabled = true
