@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -14,16 +15,17 @@ namespace Company.Functions.Bus
 {
     public class PostVehicleTollBoothMessage
     {
+        private readonly IConfiguration configuration;
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public PostVehicleTollBoothMessage(IScopedTelemetryClient scopedTelemetryClient)
+        public PostVehicleTollBoothMessage(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
         {
+            this.configuration = configuration;
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
         [FunctionName("PostVehicleTollBoothMessage")]
-        [return: ServiceBus("vehicle_toll_booth", Connection = "servicebus_connection_string")]
-        public async Task<ServiceBusMessage> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
+        public async Task<IActionResult> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
 
@@ -65,15 +67,19 @@ namespace Company.Functions.Bus
 
             logger.LogInformation($"Vehicle with licence plate {messageData.LicensePlate} has passed through toll {messageData.TollId}");
 
-            EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothInInterface");
-            scopedTelemetryClient.TrackEvent(eventTelemetry);
-
-            var message = new ServiceBusMessage(JsonConvert.SerializeObject(messageData))
+            await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
             {
-                MessageId = messageCustomDimensions["MessageId"]
-            }.WithCustomProperties(messageCustomDimensions);
+                var sender = client.CreateSender("vehicle_toll_booth");
+                await sender.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(messageData))
+                {
+                    MessageId = messageCustomDimensions["MessageId"]
+                }.WithCustomProperties(messageCustomDimensions));
 
-            return message;
+                EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothInInterface");
+                scopedTelemetryClient.TrackEvent(eventTelemetry);
+            };
+
+            return new OkResult();
         }
     }
 }
