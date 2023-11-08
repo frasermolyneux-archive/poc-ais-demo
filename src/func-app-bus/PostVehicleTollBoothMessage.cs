@@ -1,4 +1,6 @@
+using Azure.Messaging.ServiceBus;
 using Company.Abstractions.Models;
+using Company.Functions.Bus.Extensions;
 using Company.Telemetry;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;
@@ -21,17 +23,18 @@ namespace Company.Functions.Bus
 
         [FunctionName("PostVehicleTollBoothMessage")]
         [return: ServiceBus("vehicle_toll_booth", Connection = "servicebus_connection_string")]
-        public async Task<string> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
+        public async Task<ServiceBusMessage> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
+
+            var messageId = req.Headers["MessageId"].FirstOrDefault() ?? Guid.NewGuid().ToString();
+            scopedTelemetryClient.SetAdditionalProperty("MessageId", messageId);
+
             string requestBody = string.Empty;
             using (StreamReader streamReader = new StreamReader(req.Body))
             {
                 requestBody = await streamReader.ReadToEndAsync();
             }
-
-            logger.LogInformation($"Received vehicle toll booth event: {requestBody}");
-
-            var messageId = req.Headers["MessageId"].FirstOrDefault() ?? Guid.NewGuid().ToString();
 
             VehicleTollBoothData? messageData;
             try
@@ -50,8 +53,6 @@ namespace Company.Functions.Bus
                 throw new Exception("Unable to deserialize vehicle toll booth event");
             }
 
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
-
             var messageCustomDimensions = new Dictionary<string, string>()
             {
                 {"MessageId", messageId},
@@ -67,7 +68,12 @@ namespace Company.Functions.Bus
             EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothInInterface");
             scopedTelemetryClient.TrackEvent(eventTelemetry);
 
-            return JsonConvert.SerializeObject(messageData);
+            var message = new ServiceBusMessage(JsonConvert.SerializeObject(messageData))
+            {
+                MessageId = messageCustomDimensions["MessageId"]
+            }.WithCustomProperties(messageCustomDimensions);
+
+            return message;
         }
     }
 }
