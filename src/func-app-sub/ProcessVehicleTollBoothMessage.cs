@@ -45,11 +45,11 @@ namespace Company.Functions.Sub
             }
 
             var messageCustomDimensions = new Dictionary<string, string>()
-                    {
-                        {"MessageId", myQueueItem.MessageId},
-                        {"TollId", messageData.TollId.ToString()},
-                        {"LicensePlate", messageData.LicensePlate}
-                    };
+            {
+                {"MessageId", myQueueItem.MessageId},
+                {"TollId", myQueueItem.ApplicationProperties["TollId"].ToString() ?? "FailedToGetFromApplicationProperties"},
+                {"LicensePlate", myQueueItem.ApplicationProperties["LicensePlate"].ToString() ?? "FailedToGetFromApplicationProperties"}
+            };
 
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
