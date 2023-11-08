@@ -109,7 +109,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
 		
             var customDimensions = new Dictionary<string, string>() {
                 {"InterfaceId", "ID_VehicleTollBooth"},
-                {"MessageId", context.Variables["messageId"].ToString()},
+                {"MessageId", (string)context.Variables["messageId"]},
                 {"TollId", tollId},
                 {"LicensePlate", licensePlate}
             };
