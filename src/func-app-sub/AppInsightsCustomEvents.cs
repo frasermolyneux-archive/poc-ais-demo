@@ -38,8 +38,13 @@ namespace Company.Functions.Sub
                     continue;
                 }
 
+                TelemetryClient.Context.Operation.ParentId = messageData.OperationId;
                 TelemetryClient.Context.Operation.Id = messageData.OperationId;
+
                 TelemetryClient.Context.Operation.Name = messageData.EventName;
+
+                TelemetryClient.Context.Cloud.RoleName = messageData.ServiceName;
+                TelemetryClient.Context.Cloud.RoleInstance = messageData.ServiceId;
 
                 TelemetryClient.TrackEvent(messageData.EventName, messageData.CustomDimensions);
             }

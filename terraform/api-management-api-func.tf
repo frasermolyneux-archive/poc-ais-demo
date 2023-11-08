@@ -99,23 +99,23 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
       <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
-            dynamic requestData = JsonConvert.DeserializeObject(context.Request.Body.As<string>());
-
+	          var requestBody = (JObject)context.Request.Body.As<JObject>(preserveContent: true);
+            var tollId = requestBody["TollId"] != null ? (string)requestBody["TollId"] : "InvalidTollId";
+            var licensePlate = requestBody["LicensePlate"] != null ? (string)requestBody["LicensePlate"] : "InvalidLicensePlate";
+		
             var customDimensions = new Dictionary<string, string>() {
                 {"InterfaceId", "ID_VehicleTollBooth"},
-                {"TollId", requestData?.TollId},
-                {"LicensePlate", requestData?.LicensePlate}
+                {"TollId", tollId},
+                {"LicensePlate", licensePlate}
             };
 
-            var customEvent = new {
-                OperationId = context.Operation.Id,
-                ServiceId = context.Deployment.ServiceId,
-                ServiceName = context.Deployment.ServiceName,
-                EventName = context.Operation.Name,
-                CustomDimensions = customDimensions
-            };
-
-            return JsonConvert.SerializeObject(customEvent);
+            var json = new JObject();
+            json.Add("OperationId", context.RequestId);
+            json.Add("ServiceId", context.Deployment.ServiceId);
+            json.Add("ServiceName", context.Deployment.ServiceName);
+            json.Add("EventName", context.Operation.Name);
+	          json.Add("CustomDimensions", JObject.FromObject(customDimensions));
+		        return json.ToString();
         }
       </log-to-eventhub>
   </inbound>
