@@ -97,9 +97,19 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
   <inbound>
       <base/>
       <set-backend-service backend-id="${azurerm_api_management_backend.funcapp_backend[each.key].name}" />
+      <set-variable name="requestData" value="@((JObject)context.Request.Body.As<JObject>(preserveContent: true))" />
       <set-variable name="messageId" value="@(Guid.NewGuid().ToString())" />
+      <set-header name="InterfaceId" exists-action="override">
+          <value>ID_VehicleTollBooth</value>
+      </set-header>
       <set-header name="MessageId" exists-action="override">
-        <value>@((string)context.Variables["messageId"])</value>
+          <value>@((string)context.Variables["messageId"])</value>
+      </set-header>
+      <set-header name="TollId" exists-action="override">
+          <value>@((string)((JObject)context.Variables["requestData"])["TollId"])</value>
+      </set-header>
+      <set-header name="LicensePlate" exists-action="override">
+          <value>@((string)((JObject)context.Variables["requestData"])["LicensePlate"])</value>
       </set-header>
       <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
@@ -128,7 +138,16 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
       <forward-request />
   </backend>
   <outbound>
-      <base/>
+    <base/>
+    <set-header name="InterfaceId" exists-action="override">
+        <value>ID_VehicleTollBooth</value>
+    </set-header>
+    <set-header name="TollId" exists-action="override">
+        <value>@((string)((JObject)context.Variables["requestData"])["TollId"])</value>
+    </set-header>
+    <set-header name="LicensePlate" exists-action="override">
+        <value>@((string)((JObject)context.Variables["requestData"])["LicensePlate"])</value>
+    </set-header>
   </outbound>
   <on-error />
 </policies>
@@ -155,4 +174,52 @@ resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
   verbosity = "information"
 
   http_correlation_protocol = "W3C"
+
+  frontend_request {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "accept",
+      "origin",
+      "InterfaceId",
+      "TollId",
+      "LicensePlate"
+    ]
+  }
+
+  frontend_response {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "content-length",
+      "origin",
+      "InterfaceId",
+      "TollId",
+      "LicensePlate"
+    ]
+  }
+
+  backend_request {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "accept",
+      "origin",
+      "InterfaceId",
+      "TollId",
+      "LicensePlate"
+    ]
+  }
+
+  backend_response {
+    body_bytes = 32
+    headers_to_log = [
+      "content-type",
+      "content-length",
+      "origin",
+      "InterfaceId",
+      "TollId",
+      "LicensePlate"
+    ]
+  }
 }
