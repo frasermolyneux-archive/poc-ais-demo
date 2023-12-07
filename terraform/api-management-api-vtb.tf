@@ -49,7 +49,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
 XML
 }
 
-resource "azure_api_management_api_operation_policy" "vtb01_operation_policy" {
+resource "azurerm_api_management_api_operation_policy" "vtb01_operation_policy" {
   for_each = { for each in local.func_apps_instances_apim : each.key => each if each.value.role == "servicebus" }
 
   api_name            = azurerm_api_management_api.funcapp_api[each.key].name
@@ -124,7 +124,7 @@ resource "azure_api_management_api_operation_policy" "vtb01_operation_policy" {
 XML
 }
 
-resource "azure_api_management_api_operation_policy" "vtb02_operation_policy" {
+resource "azurerm_api_management_api_operation_policy" "vtb02_operation_policy" {
   for_each = { for each in local.func_apps_instances_apim : each.key => each if each.value.role == "servicebus" }
 
   api_name            = azurerm_api_management_api.funcapp_api[each.key].name
