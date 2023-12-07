@@ -200,7 +200,7 @@ XML
 }
 
 resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
 
   identifier = "applicationinsights"
 
