@@ -111,7 +111,7 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
       <set-header name="LicensePlate" exists-action="override">
           <value>@((string)((JObject)context.Variables["requestData"])["LicensePlate"])</value>
       </set-header>
-      <log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
+      <!--<log-to-eventhub logger-id="${azurerm_api_management_logger.apim_eh_logger[each.value.location].name}">
         @{
 	          var requestBody = (JObject)context.Request.Body.As<JObject>(preserveContent: true);
             var tollId = requestBody["TollId"] != null ? (string)requestBody["TollId"] : "InvalidTollId";
@@ -132,7 +132,35 @@ resource "azurerm_api_management_api_policy" "funcapp_backend" {
 	          json.Add("CustomDimensions", JObject.FromObject(customDimensions));
 		        return json.ToString();
         }
-      </log-to-eventhub>
+      </log-to-eventhub>-->
+      <trace source="API Management">
+        <message>
+          @{
+              var requestBody = (JObject)context.Request.Body.As<JObject>(preserveContent: true);
+              var tollId = requestBody["TollId"] != null ? (string)requestBody["TollId"] : "InvalidTollId";
+              var licensePlate = requestBody["LicensePlate"] != null ? (string)requestBody["LicensePlate"] : "InvalidLicensePlate";
+      
+              var customDimensions = new Dictionary<string, string>() {
+                  {"InterfaceId", "ID_VehicleTollBooth"},
+                  {"MessageId", (string)context.Variables["messageId"]},
+                  {"TollId", tollId},
+                  {"LicensePlate", licensePlate}
+              };
+
+              var json = new JObject();
+              json.Add("OperationId", context.RequestId);
+              json.Add("ServiceId", context.Deployment.ServiceId);
+              json.Add("ServiceName", context.Deployment.ServiceName);
+              json.Add("EventName", context.Operation.Name);
+              json.Add("CustomDimensions", JObject.FromObject(customDimensions));
+              return json.ToString();
+          }
+        </message>
+        <metadata name="InterfaceId" value="ID_VehicleTollBooth"/>
+        <metadata name="MessageId" value="@((string)context.Variables["messageId"])"/>
+        <metadata name="TollId" value="@((string)((JObject)context.Variables["requestData"])["TollId"])"/>
+        <metadata name="LicensePlate" value="@((string)((JObject)context.Variables["requestData"])["LicensePlate"])"/>
+      </trace>
   </inbound>
   <backend>
       <forward-request />
