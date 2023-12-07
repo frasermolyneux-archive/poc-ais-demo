@@ -25,7 +25,7 @@ namespace Company.Functions.Bus
         }
 
         [FunctionName("PostVTB01")]
-        public async Task<IActionResult> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
+        public async Task<IActionResult> RunPostVTB01([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VTB01");
 

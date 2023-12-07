@@ -6,7 +6,7 @@
         "version": "1.0"
     },
     "paths": {
-        "/ID_VTB01": {
+        "/PostVTB01": {
             "post": {
                 "summary": "PostVTB01",
                 "description": "PostVTB01",
@@ -51,7 +51,7 @@
                 }
             }
         },
-        "/ID_VTB02": {
+        "/PostVTB02": {
             "post": {
                 "summary": "PostVTB02",
                 "description": "PostVTB02",
