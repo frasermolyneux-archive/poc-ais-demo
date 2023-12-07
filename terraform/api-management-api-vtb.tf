@@ -1,5 +1,5 @@
 resource "azurerm_api_management_api" "funcapp_api" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   name = each.value.app_name
 
@@ -26,7 +26,7 @@ resource "azurerm_api_management_api" "funcapp_api" {
 }
 
 resource "azurerm_api_management_api_policy" "funcapp_backend" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   api_name            = azurerm_api_management_api.funcapp_api[each.key].name
   resource_group_name = azurerm_resource_group.apim.name
@@ -50,7 +50,7 @@ XML
 }
 
 resource "azurerm_api_management_api_operation_policy" "vtb01_operation_policy" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   api_name            = azurerm_api_management_api.funcapp_api[each.key].name
   resource_group_name = azurerm_resource_group.apim.name
@@ -125,7 +125,7 @@ XML
 }
 
 resource "azurerm_api_management_api_operation_policy" "vtb02_operation_policy" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   api_name            = azurerm_api_management_api.funcapp_api[each.key].name
   resource_group_name = azurerm_resource_group.apim.name
@@ -200,7 +200,7 @@ XML
 }
 
 resource "azurerm_api_management_api_diagnostic" "funcapp_api_diagnostic" {
-  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "servicebus" }
+  for_each = { for each in local.func_apps_instances_apim : each.key => each if each.role == "bus" }
 
   identifier = "applicationinsights"
 
