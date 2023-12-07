@@ -79,41 +79,21 @@ resource "azurerm_monitor_diagnostic_setting" "sb" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "OperationalLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "VNetAndIPFilteringLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "RuntimeAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "ApplicationMetricsLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }

@@ -45,33 +45,17 @@ resource "azurerm_monitor_diagnostic_setting" "fd" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "FrontdoorAccessLog"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "FrontDoorHealthProbeLog"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "FrontDoorWebApplicationFirewallLog"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }

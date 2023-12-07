@@ -44,10 +44,6 @@ resource "azurerm_monitor_diagnostic_setting" "logic_svcplan" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }
 
@@ -258,25 +254,13 @@ resource "azurerm_monitor_diagnostic_setting" "logic" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   //enabled_log {
   //  category = "WorkflowRuntime"
-
-  //  retention_policy {
-  //    enabled = false
-  //  }
   //}
 
   //enabled_log {
   //  category = "FunctionAppLogs"
-
-  //  retention_policy {
-  //    enabled = false
-  //  }
   //}
 }

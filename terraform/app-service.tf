@@ -30,10 +30,6 @@ resource "azurerm_monitor_diagnostic_setting" "app_svcplan" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }
 
@@ -114,73 +110,37 @@ resource "azurerm_monitor_diagnostic_setting" "app" {
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceAntivirusScanAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceHTTPLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceConsoleLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceAppLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceFileAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServiceIPSecAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "AppServicePlatformLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }
