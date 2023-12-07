@@ -10,21 +10,21 @@ using Newtonsoft.Json;
 
 namespace Company.Functions.Sub
 {
-    public class ProcessVehicleTollBoothMessage
+    public class ID_VTB01
     {
         private readonly IConfiguration configuration;
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public ProcessVehicleTollBoothMessage(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
+        public ID_VTB01(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
         {
             this.configuration = configuration;
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
-        [FunctionName("ProcessVehicleTollBoothMessage")]
-        public async Task RunProcessVehicleTollBoothMessage([ServiceBusTrigger("vehicle_toll_booth", Connection = "servicebus_connection_string")] ServiceBusReceivedMessage myQueueItem, Int32 deliveryCount, DateTime enqueuedTimeUtc, string messageId, ILogger logger)
+        [FunctionName("ID_VTB01")]
+        public async Task RunID_VTB01([ServiceBusTrigger("vtb01", Connection = "servicebus_connection_string")] ServiceBusReceivedMessage myQueueItem, Int32 deliveryCount, DateTime enqueuedTimeUtc, string messageId, ILogger logger)
         {
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VTB01");
 
             VehicleTollBoothData? messageData;
             try
@@ -53,7 +53,7 @@ namespace Company.Functions.Sub
 
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
-            EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothMessageProcessed");
+            EventTelemetry eventTelemetry = new EventTelemetry("VTB01_Processed");
             scopedTelemetryClient.TrackEvent(eventTelemetry);
         }
     }

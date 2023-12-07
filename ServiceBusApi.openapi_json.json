@@ -6,11 +6,56 @@
         "version": "1.0"
     },
     "paths": {
-        "/PostVehicleTollBoothMessage": {
+        "/ID_VTB01": {
             "post": {
-                "summary": "PostVehicleTollBoothMessage",
-                "description": "PostVehicleTollBoothMessage",
-                "operationId": "PostVehicleTollBoothMessage",
+                "summary": "PostVTB01",
+                "description": "PostVTB01",
+                "operationId": "PostVTB01",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "EntryTime": "2023-05-09T04:49:15.0189703Z",
+                                "CarModel": {
+                                    "Make": "Ford",
+                                    "Model": "Mustang",
+                                    "VehicleType": 1,
+                                    "VehicleWeight": 0
+                                },
+                                "State": "TX",
+                                "TollAmount": 4,
+                                "Tag": 634148038,
+                                "TollId": 2,
+                                "LicensePlate": "ZSY 7044",
+                                "EventProcessedUtcTime": "2023-05-09T04:52:54.3513112Z",
+                                "PartitionId": 0,
+                                "EventEnqueuedUtcTime": "2023-05-09T04:49:16.0750000Z"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "null"
+                    }
+                }
+            }
+        },
+        "/ID_VTB02": {
+            "post": {
+                "summary": "PostVTB02",
+                "description": "PostVTB02",
+                "operationId": "PostVTB02",
                 "parameters": [
                     {
                         "name": "Authorization",

@@ -18,7 +18,7 @@
                 "trackedProperties": {
                     "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
                     "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
-                    "InterfaceId": "ID_FraudCallDetection",
+                    "InterfaceId": "ID_FCD01",
                     "MSRN": "@triggerBody()['userProperties']['msrn']",
                     "MessageId": "@triggerBody()['userProperties']['messageId']"
                 },
@@ -42,7 +42,7 @@
                 "trackedProperties": {
                     "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
                     "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
-                    "InterfaceId": "ID_FraudCallDetection",
+                    "InterfaceId": "ID_FCD01",
                     "MSRN": "@triggerBody()['userProperties']['msrn']",
                     "MessageId": "@triggerBody()['userProperties']['messageId']"
                 },
@@ -66,7 +66,7 @@
                 "trackedProperties": {
                     "CalledIMSI": "@triggerBody()['userProperties']['calledIMSI']",
                     "CallingIMSI": "@triggerBody()['userProperties']['callingIMSI']",
-                    "InterfaceId": "ID_FraudCallDetection",
+                    "InterfaceId": "ID_FCD01",
                     "MSRN": "@triggerBody()['userProperties']['msrn']",
                     "MessageId": "@triggerBody()['userProperties']['messageId']"
                 },
@@ -152,7 +152,7 @@
                 "inputs": {
                     "parameters": {
                         "isSessionsEnabled": false,
-                        "queueName": "fraud_call_detections"
+                        "queueName": "fcd01"
                     },
                     "serviceProviderConfiguration": {
                         "connectionName": "serviceBus",

@@ -23,7 +23,7 @@ namespace Company.Functions.Job
         public async Task<IActionResult> RunFraudCallDetectionFunc([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
             var messageId = req.Headers["x-ms-client-tracking-id"];
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FCD01");
             scopedTelemetryClient.SetAdditionalProperty("MessageId", messageId);
 
             string requestBody = string.Empty;
@@ -84,7 +84,7 @@ namespace Company.Functions.Job
                 logger.LogInformation("Service type has been left with the original value");
             }
 
-            EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionTransformed");
+            EventTelemetry eventTelemetry = new EventTelemetry("FCD01_Transformed");
             scopedTelemetryClient.TrackEvent(eventTelemetry);
 
             return new OkObjectResult(messageData);

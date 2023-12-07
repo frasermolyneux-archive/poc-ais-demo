@@ -13,21 +13,21 @@ using Newtonsoft.Json;
 
 namespace Company.Functions.Bus
 {
-    public class PostVehicleTollBoothMessage
+    public class PostVTB01
     {
         private readonly IConfiguration configuration;
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public PostVehicleTollBoothMessage(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
+        public PostVTB01(IConfiguration configuration, IScopedTelemetryClient scopedTelemetryClient)
         {
             this.configuration = configuration;
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
-        [FunctionName("PostVehicleTollBoothMessage")]
+        [FunctionName("PostVTB01")]
         public async Task<IActionResult> RunPostVehicleTollMessage([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VehicleTollBooth");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_VTB01");
 
             var messageId = req.Headers["MessageId"].FirstOrDefault() ?? Guid.NewGuid().ToString();
             scopedTelemetryClient.SetAdditionalProperty("MessageId", messageId);
@@ -69,13 +69,13 @@ namespace Company.Functions.Bus
 
             await using (var client = new ServiceBusClient(configuration["servicebus_connection_string"]))
             {
-                var sender = client.CreateSender("vehicle_toll_booth");
+                var sender = client.CreateSender("vtb01");
                 await sender.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(messageData))
                 {
                     MessageId = messageCustomDimensions["MessageId"]
                 }.WithCustomProperties(messageCustomDimensions));
 
-                EventTelemetry eventTelemetry = new EventTelemetry("VehicleTollBoothInInterface");
+                EventTelemetry eventTelemetry = new EventTelemetry("VTB01_InInterface");
                 scopedTelemetryClient.TrackEvent(eventTelemetry);
             };
 

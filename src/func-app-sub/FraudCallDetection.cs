@@ -24,7 +24,7 @@ namespace Company.Functions.Sub
         [FunctionName("FraudCallDetection")]
         public async Task RunFraudCallDetection([EventHubTrigger("fraud-call-detection", Connection = "eventhub_connection_string")] string input, ILogger logger)
         {
-            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FraudCallDetection");
+            scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FCD01");
 
             FraudCallDetetectionData? messageData;
             try
@@ -58,13 +58,13 @@ namespace Company.Functions.Sub
             {
                 logger.LogInformation($"The message originated from {messageData.SwitchNum}");
 
-                var sender = client.CreateSender("fraud_call_detections");
+                var sender = client.CreateSender("fcd01");
                 await sender.SendMessageAsync(new ServiceBusMessage(input)
                 {
                     MessageId = messageCustomDimensions["MessageId"]
                 }.WithCustomProperties(messageCustomDimensions));
 
-                EventTelemetry eventTelemetry = new EventTelemetry("FraudCallDetectionInInterface");
+                EventTelemetry eventTelemetry = new EventTelemetry("FCD01_InInterface");
                 scopedTelemetryClient.TrackEvent(eventTelemetry);
             };
 

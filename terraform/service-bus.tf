@@ -48,17 +48,24 @@ resource "azurerm_servicebus_namespace" "sb" {
 //  }
 //}
 
-resource "azurerm_servicebus_queue" "fraud_call_detections" {
+resource "azurerm_servicebus_queue" "fcd01" {
   for_each = toset(var.locations)
 
-  name         = "fraud_call_detections"
+  name         = "fcd01"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
-resource "azurerm_servicebus_queue" "vehicle_toll_booth" {
+resource "azurerm_servicebus_queue" "vtb01" {
   for_each = toset(var.locations)
 
-  name         = "vehicle_toll_booth"
+  name         = "vtb01"
+  namespace_id = azurerm_servicebus_namespace.sb[each.value].id
+}
+
+resource "azurerm_servicebus_queue" "vtb02" {
+  for_each = toset(var.locations)
+
+  name         = "vtb02"
   namespace_id = azurerm_servicebus_namespace.sb[each.value].id
 }
 
