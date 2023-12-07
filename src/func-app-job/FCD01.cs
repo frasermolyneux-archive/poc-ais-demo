@@ -10,17 +10,17 @@ using Newtonsoft.Json;
 
 namespace Company.Functions.Job
 {
-    public class FraudCallDetectionFunc
+    public class FCD01
     {
         private readonly IScopedTelemetryClient scopedTelemetryClient;
 
-        public FraudCallDetectionFunc(IScopedTelemetryClient scopedTelemetryClient)
+        public FCD01(IScopedTelemetryClient scopedTelemetryClient)
         {
             this.scopedTelemetryClient = scopedTelemetryClient;
         }
 
-        [FunctionName("FraudCallDetectionFunc")]
-        public async Task<IActionResult> RunFraudCallDetectionFunc([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
+        [FunctionName("FCD01_Transform")]
+        public async Task<IActionResult> RunFCD01_Transform([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger logger)
         {
             var messageId = req.Headers["x-ms-client-tracking-id"];
             scopedTelemetryClient.SetAdditionalProperty("InterfaceId", "ID_FCD01");

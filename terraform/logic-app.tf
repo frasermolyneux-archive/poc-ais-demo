@@ -225,7 +225,7 @@ resource "azurerm_logic_app_standard" "logic" {
     "WORKFLOWS_FUNCTIONAPP_NAME"           = azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name
 
     // FunctionAppTriggerUrls
-    "function_app_trigger_fraudcalldetectionfunc" = format("https://%s.azurewebsites.net/api/fraudcalldetectionfunc", azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name)
+    "function_app_trigger_fcd01_transform" = format("https://%s.azurewebsites.net/api/FCD01_Transform", azurerm_linux_function_app.func[format("fa-job-%s-%s", var.environment, each.value.location)].name)
   }
 
   site_config {
