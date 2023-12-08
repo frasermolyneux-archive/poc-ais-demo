@@ -10,7 +10,7 @@
                 "inputs": {
                     "parameters": {
                         "isSessionsEnabled": false,
-                        "queueName": "vtb01"
+                        "queueName": "vtb02"
                     },
                     "serviceProviderConfiguration": {
                         "connectionName": "serviceBus",
