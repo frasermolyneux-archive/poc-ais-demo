@@ -55,7 +55,7 @@ namespace Company.Functions.Sub
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
             var operation = scopedTelemetryClient.Client.StartOperation<DependencyTelemetry>("VTB01_CustomDependency");
-            operation.Telemetry.Type = "Background";
+            operation.Telemetry.Type = "HTTP";
             try
             {
                 EventTelemetry eventTelemetry = new EventTelemetry("VTB01_Processed");
