@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": false
+      }
+    },
+    "enableDependencyTracking": false
+  },
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle.Workflows",
+    "version": "[1.*, 2.0.0)"
+  },
+  "extensions": {
+    "workflow": {
+      "Settings": {
+        "Runtime.ApplicationInsightTelemetryVersion": "v2"
+      }
+    }
+  }
+}
+
+If the Runtime.ApplicationInsightTelemetryVersion extension is enabled then the logging is better and cleaner, but Service Bus to Logic App in app insights is not automatically correlated. 
