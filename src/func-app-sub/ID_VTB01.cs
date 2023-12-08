@@ -2,6 +2,7 @@ using Azure.Messaging.ServiceBus;
 using Company.Abstractions.Models;
 using Company.Functions.Sub.Extensions;
 using Company.Telemetry;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -53,8 +54,22 @@ namespace Company.Functions.Sub
 
             scopedTelemetryClient.SetAdditionalProperties(messageCustomDimensions);
 
-            EventTelemetry eventTelemetry = new EventTelemetry("VTB01_Processed");
-            scopedTelemetryClient.TrackEvent(eventTelemetry);
+            var operation = scopedTelemetryClient.Client.StartOperation<DependencyTelemetry>("VTB01_CustomDependency");
+            operation.Telemetry.Type = "Background";
+            try
+            {
+                EventTelemetry eventTelemetry = new EventTelemetry("VTB01_Processed");
+                scopedTelemetryClient.TrackEvent(eventTelemetry);
+            }
+            catch (Exception e)
+            {
+                scopedTelemetryClient.Client.TrackException(e);
+                throw;
+            }
+            finally
+            {
+                scopedTelemetryClient.Client.StopOperation(operation);
+            }
         }
     }
 }

@@ -12,6 +12,8 @@ namespace Company.Telemetry
 
         private readonly Dictionary<string, string> _additionalProperties = new Dictionary<string, string>();
 
+        public TelemetryClient Client => telemetryClient;
+
         public ScopedTelemetryClient(TelemetryConfiguration telemetryConfiguration)
         {
             this.telemetryClient = new TelemetryClient(telemetryConfiguration);
